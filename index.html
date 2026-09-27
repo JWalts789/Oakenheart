@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oakenheart MMO Design Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#151f32', 900: '#0f172a', 950: '#080d1a' },
+                        oakenheart: { gold: '#d4af37', sky: '#38bdf8', dark: '#0b1120' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .unreviewed-glow {
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+            border-color: #38bdf8 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col custom-scrollbar">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="compass" class="w-8 h-8 text-sky-400"></i>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-amber-300">
+                        Oakenheart MMO Hub
+                    </h1>
+                    <p class="text-[10px] text-slate-400">Merge-On-Import & Questline Engine Active</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="exportData()" class="flex items-center space-x-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded transition">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Export JSON</span>
+                </button>
+                <label class="flex items-center space-x-1 text-xs bg-sky-600 hover:bg-sky-500 text-white border border-sky-500 px-3 py-1.5 rounded cursor-pointer transition">
+                    <i data-lucide="git-merge" class="w-4 h-4"></i>
+                    <span>Merge JSON Import</span>
+                    <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
+                </label>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs with scrollbar hidden -->
+        <div class="max-w-7xl mx-auto px-4 flex space-x-2 border-t border-slate-800/50 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+            <button onclick="switchTab('notes')" id="tab-btn-notes" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-sky-400 text-sky-400 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="book-open" class="w-4 h-4"></i><span>Notes & Codex</span>
+            </button>
+            <button onclick="switchTab('quests')" id="tab-btn-quests" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="scroll" class="w-4 h-4"></i><span>Quests & Questlines</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="check-square" class="w-4 h-4"></i><span>Tasks / TODOs</span>
+            </button>
+            <button onclick="switchTab('classes')" id="tab-btn-classes" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="sword" class="w-4 h-4"></i><span>Classes & Skills</span>
+            </button>
+            <button onclick="switchTab('lifeskills')" id="tab-btn-lifeskills" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="hammer" class="w-4 h-4"></i><span>LifeSkills</span>
+            </button>
+            <button onclick="switchTab('items')" id="tab-btn-items" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="package" class="w-4 h-4"></i><span>Items & Equipment</span>
+            </button>
+            <button onclick="switchTab('world')" id="tab-btn-world" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="map" class="w-4 h-4"></i><span>Regions & Guilds</span>
+            </button>
+            <button onclick="switchTab('npcs')" id="tab-btn-npcs" class="nav-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="users" class="w-4 h-4"></i><span>NPCs & Factions</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- ==================== TAB 1: NOTES & CODEX ==================== -->
+        <section id="tab-notes" class="tab-content">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Oakenheart Codex</h2>
+                    <p class="text-xs text-slate-400">Documentation & Worldbuilding Notes</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-notes" onkeyup="renderNotes()" placeholder="Filter notes..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-48 md:w-64">
+                    </div>
+                    <button onclick="openNoteModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New Note</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filter Bar -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button onclick="filterNotes('All')" class="note-filter-btn px-3 py-1 text-xs rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">All</button>
+                <button onclick="filterNotes('Lore & History')" class="note-filter-btn px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200">Lore & History</button>
+                <button onclick="filterNotes('Game Mechanics')" class="note-filter-btn px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200">Game Mechanics</button>
+                <button onclick="filterNotes('World Locations')" class="note-filter-btn px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200">World Locations</button>
+            </div>
+
+            <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- ==================== TAB 2: QUESTS & QUESTLINES ==================== -->
+        <section id="tab-quests" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Quests & Questlines</h2>
+                    <p class="text-xs text-slate-400">Map out quest givers, objectives, and progression chains</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-quests" onkeyup="renderQuests()" placeholder="Filter quests..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-48 md:w-64">
+                    </div>
+                    <button onclick="openQuestModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New Quest</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="quests-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- ==================== TAB 3: TASKS / TODOS ==================== -->
+        <section id="tab-tasks" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Writer & Dev Tasks</h2>
+                    <p class="text-xs text-slate-400">Manage tasks and assign responsibilities</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-tasks" onkeyup="renderTasks()" placeholder="Filter tasks..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-48 md:w-64">
+                    </div>
+                    <button onclick="openTaskModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New Task</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                        <span class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
+                            <i data-lucide="circle" class="w-4 h-4"></i><span>To Do</span>
+                        </span>
+                        <span id="count-todo" class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
+                    </div>
+                    <div id="col-todo" class="space-y-3 min-h-[200px]"></div>
+                </div>
+
+                <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                        <span class="text-sm font-semibold text-sky-400 flex items-center space-x-2">
+                            <i data-lucide="clock" class="w-4 h-4"></i><span>In Progress</span>
+                        </span>
+                        <span id="count-in-progress" class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
+                    </div>
+                    <div id="col-in-progress" class="space-y-3 min-h-[200px]"></div>
+                </div>
+
+                <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                        <span class="text-sm font-semibold text-emerald-400 flex items-center space-x-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i><span>Completed</span>
+                        </span>
+                        <span id="count-completed" class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
+                    </div>
+                    <div id="col-completed" class="space-y-3 min-h-[200px]"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: CLASSES & SKILLS ==================== -->
+        <section id="tab-classes" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Classes & Skills</h2>
+                    <p class="text-xs text-slate-400">Manage base classes, Level 10 subclass specializations, and skill trees</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-classes" onkeyup="renderClasses()" placeholder="Filter classes & skills..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-44 md:w-56">
+                    </div>
+                    <button onclick="openClassModal()" class="bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-xs px-3 py-2 rounded-lg flex items-center space-x-1 transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New Class</span>
+                    </button>
+                    <button onclick="openSubclassModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs px-3 py-2 rounded-lg flex items-center space-x-1 transition">
+                        <i data-lucide="git-branch" class="w-4 h-4"></i><span>New Subclass</span>
+                    </button>
+                    <button onclick="openSkillModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs px-3 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="zap" class="w-4 h-4"></i><span>New Skill</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="classes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+        <!-- ==================== TAB 5: LIFESKILLS ==================== -->
+        <section id="tab-lifeskills" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">LifeSkills</h2>
+                    <p class="text-xs text-slate-400">Manage gathering, crafting, and utility professions along with rank progression</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-lifeskills" onkeyup="renderLifeSkills()" placeholder="Filter lifeskills..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-48 md:w-64">
+                    </div>
+                    <button onclick="openLifeSkillModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New LifeSkill</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="lifeskills-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+        <!-- ==================== TAB 6: ITEMS & EQUIPMENT ==================== -->
+        <section id="tab-items" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Item & Equipment Database</h2>
+                    <p class="text-xs text-slate-400">Catalog gear, weapons, consumables, and quest relics</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-items" onkeyup="renderItems()" placeholder="Filter items..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-48 md:w-64">
+                    </div>
+                    <button onclick="openItemModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>New Item</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- ==================== TAB 7: REGIONS & GUILDS ==================== -->
+        <section id="tab-world" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-2">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                                <i data-lucide="map-pin" class="w-5 h-5 text-sky-400"></i><span>Regions</span>
+                            </h2>
+                            <p class="text-xs text-slate-400">Territories, Zones & Continents</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="search-regions" onkeyup="renderRegions()" placeholder="Filter regions..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 px-2 py-1 rounded focus:outline-none focus:border-sky-500 w-32">
+                            <button onclick="openRegionModal()" class="bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-xs px-3 py-1.5 rounded flex items-center space-x-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Add Region</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="regions-list" class="space-y-3"></div>
+                </div>
+
+                <div>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-2">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                                <i data-lucide="shield" class="w-5 h-5 text-amber-400"></i><span>Guilds & Factions</span>
+                            </h2>
+                            <p class="text-xs text-slate-400">Organizations, Orders & Alliances</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="search-guilds" onkeyup="renderGuilds()" placeholder="Filter guilds..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 px-2 py-1 rounded focus:outline-none focus:border-sky-500 w-32">
+                            <button onclick="openGuildModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs px-3 py-1.5 rounded flex items-center space-x-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Add Guild</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="guilds-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 8: NPCS & CHARACTERS ==================== -->
+        <section id="tab-npcs" class="tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">NPC & Character Roster</h2>
+                    <p class="text-xs text-slate-400">Manage key quest givers, villains, and allies</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-npcs" onkeyup="renderNpcs()" placeholder="Filter NPCs (e.g. Honeywood)..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-56 md:w-64">
+                    </div>
+                    <button onclick="openNpcModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i><span>New NPC</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="npcs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- MODALS -->
+    <!-- LifeSkill Modal -->
+    <div id="modal-lifeskill" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="lifeskill-modal-title" class="text-lg font-bold text-slate-100 mb-4">New LifeSkill</h3>
+            <input type="hidden" id="lifeskill-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">LifeSkill Name</label>
+                    <input type="text" id="lifeskill-name" placeholder="e.g. Mining, Herbalism, Blacksmithing" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Brainstormed Ideas</label>
+                    <textarea id="lifeskill-brainstorm" rows="3" placeholder="General mechanics, gathering node types, craftable item concepts..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Progression Effects Ideas</label>
+                    <textarea id="lifeskill-effects" rows="3" placeholder="High-level milestones, extra yield chances, rare drop rate boosts..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-lifeskill')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveLifeSkill()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save LifeSkill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LifeSkill Rank Modal -->
+    <div id="modal-lifeskill-rank" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="lifeskill-rank-modal-title" class="text-lg font-bold text-amber-400 mb-4 flex items-center space-x-2">
+                <i data-lucide="award" class="w-5 h-5"></i><span>Add LifeSkill Rank Progression</span>
+            </h3>
+            <input type="hidden" id="lifeskill-rank-id">
+            <input type="hidden" id="lifeskill-rank-parent-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Rank Name</label>
+                    <input type="text" id="lifeskill-rank-name" placeholder="e.g. Apprentice, Journeyman, Artisan, Master" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Levels Included In Rank</label>
+                    <input type="text" id="lifeskill-rank-levels" placeholder="e.g. 1-10, 11-20, 21-30" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Rank Efficiency Bonus</label>
+                    <input type="text" id="lifeskill-rank-bonus" placeholder="e.g. +10% Speed, +5% Double Harvest Chance" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tools of the Trade (From Items & Equipment)</label>
+                    <select id="lifeskill-rank-tool" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500"></select>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-lifeskill-rank')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveLifeSkillRank()" class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-500">Save Rank</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quest Modal -->
+    <div id="modal-quest" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="quest-modal-title" class="text-lg font-bold text-slate-100 mb-4">New Quest</h3>
+            <input type="hidden" id="quest-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Name of Quest</label>
+                    <input type="text" id="quest-name" placeholder="e.g. Secrets of the Wind" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Quest Giver (NPC)</label>
+                    <select id="quest-giver" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Quest Goal(s)</label>
+                    <textarea id="quest-goals" rows="3" placeholder="- Speak to Elder Aethel&#10;- Defeat 5 Sky Harpies&#10;- Retrieve the Aether Shard" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">(Optional) Next Quest in Line</label>
+                    <input type="text" id="quest-next" placeholder="e.g. Descent into the Gale Abyss" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-quest')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveQuest()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Quest</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NPC Associated Quests Modal -->
+    <div id="modal-npc-quests" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <h3 id="npc-quests-title" class="text-lg font-bold text-sky-400 flex items-center space-x-2">
+                    <i data-lucide="scroll" class="w-5 h-5"></i><span>Quests Given by NPC</span>
+                </h3>
+                <button onclick="closeModal('modal-npc-quests')" class="text-slate-400 hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="npc-quests-list" class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
+            <div class="flex justify-end mt-6">
+                <button onclick="closeModal('modal-npc-quests')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="modal-note" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-2xl p-6 relative">
+            <h3 id="note-modal-title" class="text-lg font-bold text-slate-100 mb-4">New Note Entry</h3>
+            <input type="hidden" id="note-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Title</label>
+                    <input type="text" id="note-title" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Category</label>
+                    <select id="note-category" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                        <option value="Lore & History">Lore & History</option>
+                        <option value="Game Mechanics">Game Mechanics</option>
+                        <option value="World Locations">World Locations</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Content / Details</label>
+                    <textarea id="note-content" rows="6" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-note')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveNote()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="modal-task" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="task-modal-title" class="text-lg font-bold text-slate-100 mb-4">New Dev Task</h3>
+            <input type="hidden" id="task-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Task Description</label>
+                    <input type="text" id="task-title" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Assignee</label>
+                        <input type="text" id="task-assignee" placeholder="e.g. Alex, Writer 1" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Status</label>
+                        <select id="task-status" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-task')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveTask()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Modal -->
+    <div id="modal-class" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-xl p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="class-modal-title" class="text-lg font-bold text-slate-100 mb-4">Add Class Specification</h3>
+            <input type="hidden" id="class-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Base Class Name</label>
+                    <input type="text" id="class-name" placeholder="e.g. Aeromancer, Sentinel" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Class Archetype / Overview</label>
+                    <textarea id="class-desc" rows="2" placeholder="Primary role, playstyle, and armor type..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+                <div class="border-t border-slate-800 pt-3">
+                    <label class="block text-xs font-semibold text-amber-400 mb-2">Level 10 Subclasses (3 Specializations)</label>
+                    <div class="space-y-2">
+                        <input type="text" id="subclass-1" placeholder="Subclass 1 (e.g. Tempest Weaver)" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500">
+                        <input type="text" id="subclass-2" placeholder="Subclass 2 (e.g. Gale Blade)" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500">
+                        <input type="text" id="subclass-3" placeholder="Subclass 3 (e.g. Zephyr Warden)" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Key Skills Overview / Passives</label>
+                    <textarea id="class-skills" rows="3" placeholder="List general class mechanics, passives, or spell overview..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-class')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveClass()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Class</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subclass Modal -->
+    <div id="modal-subclass" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="subclass-modal-title" class="text-lg font-bold text-amber-400 mb-4 flex items-center space-x-2">
+                <i data-lucide="git-branch" class="w-5 h-5"></i><span>Configure Subclass</span>
+            </h3>
+            <input type="hidden" id="subclass-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Existing Base Class</label>
+                    <select id="subclass-base-class" onchange="populateSubclassDropdowns()" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500"></select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Existing SubClass (Pulled from Base Class)</label>
+                    <select id="subclass-existing-name" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500"></select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Playstyle</label>
+                    <select id="subclass-playstyle" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                        <option value="DPS">DPS</option>
+                        <option value="Tank">Tank</option>
+                        <option value="Support">Support</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Skills Included (Matching Base Class Skills)</label>
+                    <div id="subclass-skills-checklist" class="bg-slate-950 border border-slate-800 rounded p-3 max-h-36 overflow-y-auto custom-scrollbar space-y-2"></div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Description</label>
+                    <textarea id="subclass-desc" rows="3" placeholder="Describe the subclass playstyle, strengths, and role focus..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-subclass')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveSubclass()" class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-500">Save Subclass</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Modal -->
+    <div id="modal-skill" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="skill-modal-title" class="text-lg font-bold text-sky-400 mb-4 flex items-center space-x-2">
+                <i data-lucide="zap" class="w-5 h-5"></i><span>New Skill</span>
+            </h3>
+            <input type="hidden" id="skill-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Skill Name</label>
+                    <input type="text" id="skill-name" placeholder="e.g. Cyclone Slash" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Class</label>
+                    <select id="skill-class" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Pre-Requisites (Unlock Level)</label>
+                        <input type="text" id="skill-prereqs" placeholder="e.g. Level 5" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Ranks of Skill</label>
+                        <input type="number" id="skill-ranks" min="1" max="10" placeholder="e.g. 5" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Resource Cost</label>
+                        <input type="text" id="skill-cost" placeholder="e.g. 40 Mana, 10 Energy" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Cooldown Time</label>
+                        <input type="text" id="skill-cooldown" placeholder="e.g. 12s, 1.5m" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Description</label>
+                    <textarea id="skill-desc" rows="3" placeholder="Describe the effect, damage scaling, and status mechanics..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-skill')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveSkill()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Skill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Modal -->
+    <div id="modal-item" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="item-modal-title" class="text-lg font-bold text-slate-100 mb-4">Add Item or Gear</h3>
+            <input type="hidden" id="item-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Item Name</label>
+                    <input type="text" id="item-name" placeholder="e.g. Skyweaver's Staff" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Type</label>
+                        <select id="item-type" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                            <option value="Weapon">Weapon</option>
+                            <option value="Armor">Armor</option>
+                            <option value="Consumable">Consumable</option>
+                            <option value="Quest / Relic">Quest / Relic</option>
+                            <option value="Material">Crafting Material</option>
+                            <option value="LifeSkill">LifeSkill</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Rarity</label>
+                        <select id="item-rarity" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                            <option value="Common">Common</option>
+                            <option value="Uncommon">Uncommon</option>
+                            <option value="Rare">Rare</option>
+                            <option value="Epic">Epic</option>
+                            <option value="Legendary">Legendary</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Stats, Effects & Description</label>
+                    <textarea id="item-stats" rows="3" placeholder="+15 Wind Damage, 5% Movement Speed..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-item')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveItem()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Region Modal -->
+    <div id="modal-region" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="region-modal-title" class="text-lg font-bold text-slate-100 mb-4">Add Region</h3>
+            <input type="hidden" id="region-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Region Name</label>
+                    <input type="text" id="region-name" placeholder="e.g. Aetheria Isles, Honeywood" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Description / Biome</label>
+                    <textarea id="region-desc" rows="3" placeholder="Floating archipelagos surrounded by elemental storms..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-region')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveRegion()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Region</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guild Modal -->
+    <div id="modal-guild" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="guild-modal-title" class="text-lg font-bold text-slate-100 mb-4">Add Guild / Faction</h3>
+            <input type="hidden" id="guild-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Guild/Faction Name</label>
+                    <input type="text" id="guild-name" placeholder="e.g. Ironwing Order" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Alignment / Purpose</label>
+                    <textarea id="guild-desc" rows="3" placeholder="Elite aerial defenders guarding ancient relics..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-guild')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveGuild()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save Guild</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NPC Modal -->
+    <div id="modal-npc" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 relative">
+            <h3 id="npc-modal-title" class="text-lg font-bold text-slate-100 mb-4">Add NPC</h3>
+            <input type="hidden" id="npc-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">NPC Name</label>
+                    <input type="text" id="npc-name" placeholder="e.g. High Commander Vance" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Region Location</label>
+                        <select id="npc-region" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Guild / Faction</label>
+                        <select id="npc-guild" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Role & Lore Notes</label>
+                    <textarea id="npc-role" rows="3" placeholder="Quest giver for the main storyline arc..." class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal('modal-npc')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded text-sm hover:bg-slate-700">Cancel</button>
+                <button onclick="saveNpc()" class="px-4 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-500">Save NPC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript App Logic -->
+    <script>
+        let state = {
+            notes: JSON.parse(localStorage.getItem('oakenheart_notes') || '[]'),
+            quests: JSON.parse(localStorage.getItem('oakenheart_quests') || '[]'),
+            tasks: JSON.parse(localStorage.getItem('oakenheart_tasks') || '[]'),
+            classes: JSON.parse(localStorage.getItem('oakenheart_classes') || '[]'),
+            subclasses: JSON.parse(localStorage.getItem('oakenheart_subclasses') || '[]'),
+            skills: JSON.parse(localStorage.getItem('oakenheart_skills') || '[]'),
+            lifeskills: JSON.parse(localStorage.getItem('oakenheart_lifeskills') || '[]'),
+            lifeskill_ranks: JSON.parse(localStorage.getItem('oakenheart_lifeskill_ranks') || '[]'),
+            items: JSON.parse(localStorage.getItem('oakenheart_items') || '[]'),
+            regions: JSON.parse(localStorage.getItem('oakenheart_regions') || '[]'),
+            guilds: JSON.parse(localStorage.getItem('oakenheart_guilds') || '[]'),
+            npcs: JSON.parse(localStorage.getItem('oakenheart_npcs') || '[]')
+        };
+
+        let currentNoteFilter = 'All';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderAll();
+        });
+
+        function saveToLocalStorage() {
+            localStorage.setItem('oakenheart_notes', JSON.stringify(state.notes));
+            localStorage.setItem('oakenheart_quests', JSON.stringify(state.quests));
+            localStorage.setItem('oakenheart_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('oakenheart_classes', JSON.stringify(state.classes));
+            localStorage.setItem('oakenheart_subclasses', JSON.stringify(state.subclasses));
+            localStorage.setItem('oakenheart_skills', JSON.stringify(state.skills));
+            localStorage.setItem('oakenheart_lifeskills', JSON.stringify(state.lifeskills));
+            localStorage.setItem('oakenheart_lifeskill_ranks', JSON.stringify(state.lifeskill_ranks));
+            localStorage.setItem('oakenheart_items', JSON.stringify(state.items));
+            localStorage.setItem('oakenheart_regions', JSON.stringify(state.regions));
+            localStorage.setItem('oakenheart_guilds', JSON.stringify(state.guilds));
+            localStorage.setItem('oakenheart_npcs', JSON.stringify(state.npcs));
+        }
+
+        function renderAll() {
+            renderNotes();
+            renderQuests();
+            renderTasks();
+            renderClasses();
+            renderLifeSkills();
+            renderItems();
+            renderRegions();
+            renderGuilds();
+            renderNpcs();
+            lucide.createIcons();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('border-sky-400', 'text-sky-400');
+                el.classList.add('border-transparent', 'text-slate-400');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-400');
+                activeBtn.classList.add('border-sky-400', 'text-sky-400');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function markReviewed(type, id) {
+            const item = state[type].find(x => x.id === id);
+            if (item && item.isNew) {
+                delete item.isNew;
+                saveToLocalStorage();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `oakenheart_mmo_data_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    let mergedCount = 0;
+
+                    Object.keys(importedState).forEach(key => {
+                        if (Array.isArray(importedState[key]) && Array.isArray(state[key])) {
+                            importedState[key].forEach(newItem => {
+                                const exists = state[key].some(existing => existing.id === newItem.id);
+                                if (!exists) {
+                                    newItem.isNew = true;
+                                    state[key].push(newItem);
+                                    mergedCount++;
+                                }
+                            });
+                        }
+                    });
+
+                    saveToLocalStorage();
+                    renderAll();
+                    alert(`Successfully imported and merged ${mergedCount} new items!`);
+                } catch (err) {
+                    alert('Failed to parse JSON file. Please make sure it is a valid Oakenheart export.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ==================== LIFESKILLS LOGIC ====================
+        function openLifeSkillModal(id = null) {
+            const modal = document.getElementById('modal-lifeskill');
+            if (id) {
+                markReviewed('lifeskills', id);
+                const ls = state.lifeskills.find(l => l.id === id);
+                document.getElementById('lifeskill-modal-title').innerText = "Edit LifeSkill";
+                document.getElementById('lifeskill-id').value = ls.id;
+                document.getElementById('lifeskill-name').value = ls.name;
+                document.getElementById('lifeskill-brainstorm').value = ls.brainstorm || '';
+                document.getElementById('lifeskill-effects').value = ls.effects || '';
+            } else {
+                document.getElementById('lifeskill-modal-title').innerText = "New LifeSkill";
+                document.getElementById('lifeskill-id').value = '';
+                document.getElementById('lifeskill-name').value = '';
+                document.getElementById('lifeskill-brainstorm').value = '';
+                document.getElementById('lifeskill-effects').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function saveLifeSkill() {
+            const id = document.getElementById('lifeskill-id').value;
+            const name = document.getElementById('lifeskill-name').value.trim();
+            const brainstorm = document.getElementById('lifeskill-brainstorm').value.trim();
+            const effects = document.getElementById('lifeskill-effects').value.trim();
+
+            if (!name) return alert('LifeSkill name is required.');
+
+            if (id) {
+                const ls = state.lifeskills.find(l => l.id === id);
+                ls.name = name;
+                ls.brainstorm = brainstorm;
+                ls.effects = effects;
+                delete ls.isNew;
+            } else {
+                state.lifeskills.push({ id: Date.now().toString(), name, brainstorm, effects });
+            }
+
+            saveToLocalStorage();
+            renderLifeSkills();
+            closeModal('modal-lifeskill');
+        }
+
+        function deleteLifeSkill(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this LifeSkill and all its associated rank configurations?')) {
+                state.lifeskills = state.lifeskills.filter(l => l.id !== id);
+                state.lifeskill_ranks = state.lifeskill_ranks.filter(r => r.lifeSkillId !== id);
+                saveToLocalStorage();
+                renderLifeSkills();
+            }
+        }
+
+        function openLifeSkillRankModal(lifeSkillId, rankId = null, event = null) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('modal-lifeskill-rank');
+            const toolSelect = document.getElementById('lifeskill-rank-tool');
+
+            toolSelect.innerHTML = '<option value="None / Unassigned">None / Unassigned</option>' + 
+                state.items.map(i => `<option value="${i.name}">${i.name} (${i.type} - ${i.rarity})</option>`).join('');
+
+            document.getElementById('lifeskill-rank-parent-id').value = lifeSkillId;
+
+            if (rankId) {
+                markReviewed('lifeskill_ranks', rankId);
+                const rank = state.lifeskill_ranks.find(r => r.id === rankId);
+                document.getElementById('lifeskill-rank-modal-title').innerText = "Edit LifeSkill Rank";
+                document.getElementById('lifeskill-rank-id').value = rank.id;
+                document.getElementById('lifeskill-rank-name').value = rank.name;
+                document.getElementById('lifeskill-rank-levels').value = rank.levels || '';
+                document.getElementById('lifeskill-rank-bonus').value = rank.bonus || '';
+                document.getElementById('lifeskill-rank-tool').value = rank.tool || 'None / Unassigned';
+            } else {
+                document.getElementById('lifeskill-rank-modal-title').innerText = "Add LifeSkill Rank Progression";
+                document.getElementById('lifeskill-rank-id').value = '';
+                document.getElementById('lifeskill-rank-name').value = '';
+                document.getElementById('lifeskill-rank-levels').value = '';
+                document.getElementById('lifeskill-rank-bonus').value = '';
+                document.getElementById('lifeskill-rank-tool').value = 'None / Unassigned';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function saveLifeSkillRank() {
+            const id = document.getElementById('lifeskill-rank-id').value;
+            const lifeSkillId = document.getElementById('lifeskill-rank-parent-id').value;
+            const name = document.getElementById('lifeskill-rank-name').value.trim();
+            const levels = document.getElementById('lifeskill-rank-levels').value.trim();
+            const bonus = document.getElementById('lifeskill-rank-bonus').value.trim();
+            const tool = document.getElementById('lifeskill-rank-tool').value;
+
+            if (!name) return alert('Rank Name is required.');
+
+            if (id) {
+                const rank = state.lifeskill_ranks.find(r => r.id === id);
+                rank.name = name;
+                rank.levels = levels;
+                rank.bonus = bonus;
+                rank.tool = tool;
+                delete rank.isNew;
+            } else {
+                state.lifeskill_ranks.push({ id: Date.now().toString(), lifeSkillId, name, levels, bonus, tool });
+            }
+
+            saveToLocalStorage();
+            renderLifeSkills();
+            closeModal('modal-lifeskill-rank');
+        }
+
+        function deleteLifeSkillRank(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this rank stage?')) {
+                state.lifeskill_ranks = state.lifeskill_ranks.filter(r => r.id !== id);
+                saveToLocalStorage();
+                renderLifeSkills();
+            }
+        }
+
+        function renderLifeSkills() {
+            const grid = document.getElementById('lifeskills-grid');
+            const search = (document.getElementById('search-lifeskills')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = state.lifeskills.filter(l => 
+                l.name.toLowerCase().includes(search) || 
+                (l.brainstorm && l.brainstorm.toLowerCase().includes(search)) ||
+                (l.effects && l.effects.toLowerCase().includes(search))
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-2 py-8 text-center">No lifeskills found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(ls => {
+                const ranks = state.lifeskill_ranks.filter(r => r.lifeSkillId === ls.id);
+                const unreviewedClass = ls.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = ls.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openLifeSkillModal('${ls.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-5 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-lg font-bold text-amber-400 flex items-center space-x-2">
+                                    <i data-lucide="hammer" class="w-5 h-5 text-amber-400"></i><span>${ls.name}</span>
+                                </h3>
+                                <div class="flex items-center space-x-2">
+                                    ${badge}
+                                    <button onclick="openLifeSkillRankModal('${ls.id}', null, event)" class="bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 border border-amber-600/40 text-xs px-2.5 py-1 rounded flex items-center space-x-1 transition">
+                                        <i data-lucide="award" class="w-3.5 h-3.5"></i><span>LifeSkill Rank</span>
+                                    </button>
+                                    <button onclick="deleteLifeSkill('${ls.id}', event)" class="text-slate-400 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 mb-4">
+                                <div class="bg-slate-950 p-3 rounded border border-slate-800/80">
+                                    <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Brainstormed Ideas:</span>
+                                    <p class="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">${ls.brainstorm || 'No ideas listed yet.'}</p>
+                                </div>
+
+                                <div class="bg-slate-950 p-3 rounded border border-slate-800/80">
+                                    <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Progression Effects Ideas:</span>
+                                    <p class="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">${ls.effects || 'No progression effects described yet.'}</p>
+                                </div>
+                            </div>
+
+                            <!-- Stages of Progression -->
+                            <div>
+                                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Stages of Progression (${ranks.length}):</span>
+                                ${ranks.length > 0 ? `
+                                    <div class="space-y-2">
+                                        ${ranks.map(r => `
+                                            <div onclick="event.stopPropagation(); openLifeSkillRankModal('${ls.id}', '${r.id}')" class="bg-slate-950 p-2.5 rounded border border-slate-800 hover:border-amber-500/50 transition flex justify-between items-start">
+                                                <div>
+                                                    <div class="flex items-center space-x-2 mb-1">
+                                                        <span class="text-xs font-bold text-amber-300">${r.name}</span>
+                                                        ${r.levels ? `<span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700">Lvl ${r.levels}</span>` : ''}
+                                                    </div>
+                                                    ${r.bonus ? `<p class="text-[11px] text-emerald-400 mb-1">Efficiency Bonus: ${r.bonus}</p>` : ''}
+                                                    ${r.tool && r.tool !== 'None / Unassigned' ? `<p class="text-[10px] text-sky-400 flex items-center space-x-1"><i data-lucide="wrench" class="w-3 h-3"></i><span>Tool: ${r.tool}</span></p>` : ''}
+                                                </div>
+                                                <button onclick="deleteLifeSkillRank('${r.id}', event)" class="text-slate-500 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : `
+                                    <p class="text-xs text-slate-600 bg-slate-950 p-2.5 rounded border border-slate-800/50">No rank progression stages added yet. Click "LifeSkill Rank" above to build stages.</p>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==================== QUESTS LOGIC ====================
+        function openQuestModal(id = null) {
+            const modal = document.getElementById('modal-quest');
+            const giverSelect = document.getElementById('quest-giver');
+
+            giverSelect.innerHTML = '<option value="Unknown / Unassigned">Unknown / Unassigned</option>' + 
+                state.npcs.map(n => `<option value="${n.name}">${n.name}</option>`).join('');
+
+            if (id) {
+                markReviewed('quests', id);
+                const q = state.quests.find(quest => quest.id === id);
+                document.getElementById('quest-modal-title').innerText = "Edit Quest";
+                document.getElementById('quest-id').value = q.id;
+                document.getElementById('quest-name').value = q.name;
+                document.getElementById('quest-giver').value = q.giver || 'Unknown / Unassigned';
+                document.getElementById('quest-goals').value = q.goals;
+                document.getElementById('quest-next').value = q.nextQuest || '';
+            } else {
+                document.getElementById('quest-modal-title').innerText = "New Quest";
+                document.getElementById('quest-id').value = '';
+                document.getElementById('quest-name').value = '';
+                document.getElementById('quest-giver').value = 'Unknown / Unassigned';
+                document.getElementById('quest-goals').value = '';
+                document.getElementById('quest-next').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderQuests();
+        }
+
+        function saveQuest() {
+            const id = document.getElementById('quest-id').value;
+            const name = document.getElementById('quest-name').value.trim();
+            const giver = document.getElementById('quest-giver').value;
+            const goals = document.getElementById('quest-goals').value.trim();
+            const nextQuest = document.getElementById('quest-next').value.trim();
+
+            if (!name) return alert('Quest name is required.');
+
+            if (id) {
+                const q = state.quests.find(quest => quest.id === id);
+                q.name = name;
+                q.giver = giver;
+                q.goals = goals;
+                q.nextQuest = nextQuest;
+                delete q.isNew;
+            } else {
+                state.quests.push({ id: Date.now().toString(), name, giver, goals, nextQuest });
+            }
+
+            saveToLocalStorage();
+            renderQuests();
+            closeModal('modal-quest');
+        }
+
+        function deleteQuest(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this quest?')) {
+                state.quests = state.quests.filter(q => q.id !== id);
+                saveToLocalStorage();
+                renderQuests();
+            }
+        }
+
+        function renderQuests() {
+            const grid = document.getElementById('quests-grid');
+            const search = (document.getElementById('search-quests')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = state.quests.filter(q => 
+                q.name.toLowerCase().includes(search) || 
+                (q.giver && q.giver.toLowerCase().includes(search)) || 
+                (q.goals && q.goals.toLowerCase().includes(search))
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-3 py-8 text-center">No quests found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(q => {
+                const unreviewedClass = q.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = q.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openQuestModal('${q.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-4 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] bg-amber-950/70 text-amber-300 border border-amber-800/40 px-2 py-0.5 rounded flex items-center space-x-1">
+                                    <i data-lucide="user" class="w-3 h-3"></i><span>Giver: ${q.giver || 'Unassigned'}</span>
+                                </span>
+                                ${badge}
+                            </div>
+                            <h3 class="font-bold text-slate-100 text-base mb-2">${q.name}</h3>
+                            <div class="bg-slate-950 p-2.5 rounded border border-slate-800/60 mb-3">
+                                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Quest Objectives:</span>
+                                <p class="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">${q.goals || 'No goals specified.'}</p>
+                            </div>
+                            ${q.nextQuest ? `
+                                <div class="text-[11px] text-sky-400 flex items-center space-x-1 bg-sky-950/30 p-2 rounded border border-sky-800/30">
+                                    <i data-lucide="arrow-right-circle" class="w-3.5 h-3.5"></i>
+                                    <span>Next: <strong>${q.nextQuest}</strong></span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex justify-end space-x-2 mt-4 pt-3 border-t border-slate-800/60">
+                            <button onclick="deleteQuest('${q.id}', event)" class="text-xs text-slate-400 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function showNpcQuests(npcName, event) {
+            event.stopPropagation();
+            const modal = document.getElementById('modal-npc-quests');
+            const list = document.getElementById('npc-quests-list');
+            document.getElementById('npc-quests-title').innerText = `Quests Given by ${npcName}`;
+
+            const quests = state.quests.filter(q => q.giver && q.giver.toLowerCase() === npcName.toLowerCase());
+
+            list.innerHTML = '';
+            if (quests.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">No quests assigned to ${npcName} yet.</p>`;
+            } else {
+                quests.forEach(q => {
+                    list.innerHTML += `
+                        <div class="bg-slate-950 border border-slate-800 p-3 rounded">
+                            <h4 class="font-bold text-sm text-slate-200 mb-1">${q.name}</h4>
+                            <p class="text-xs text-slate-400 whitespace-pre-wrap mb-2">${q.goals || 'No goals listed.'}</p>
+                            ${q.nextQuest ? `<span class="text-[10px] text-sky-400 block">Next Quest: ${q.nextQuest}</span>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            modal.classList.remove('hidden');
+        }
+
+        // ==================== NOTES LOGIC ====================
+        function openNoteModal(id = null) {
+            const modal = document.getElementById('modal-note');
+            if (id) {
+                markReviewed('notes', id);
+                const note = state.notes.find(n => n.id === id);
+                document.getElementById('note-modal-title').innerText = "Edit Note";
+                document.getElementById('note-id').value = note.id;
+                document.getElementById('note-title').value = note.title;
+                document.getElementById('note-category').value = note.category;
+                document.getElementById('note-content').value = note.content;
+            } else {
+                document.getElementById('note-modal-title').innerText = "New Note Entry";
+                document.getElementById('note-id').value = '';
+                document.getElementById('note-title').value = '';
+                document.getElementById('note-category').value = 'Lore & History';
+                document.getElementById('note-content').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderNotes();
+        }
+
+        function saveNote() {
+            const id = document.getElementById('note-id').value;
+            const title = document.getElementById('note-title').value.trim();
+            const category = document.getElementById('note-category').value;
+            const content = document.getElementById('note-content').value.trim();
+
+            if (!title) return alert('Please enter a note title.');
+
+            if (id) {
+                const note = state.notes.find(n => n.id === id);
+                note.title = title;
+                note.category = category;
+                note.content = content;
+                delete note.isNew;
+            } else {
+                state.notes.push({ id: Date.now().toString(), title, category, content, date: new Date().toLocaleDateString() });
+            }
+
+            saveToLocalStorage();
+            renderNotes();
+            closeModal('modal-note');
+        }
+
+        function deleteNote(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this note?')) {
+                state.notes = state.notes.filter(n => n.id !== id);
+                saveToLocalStorage();
+                renderNotes();
+            }
+        }
+
+        function filterNotes(cat) {
+            currentNoteFilter = cat;
+            document.querySelectorAll('.note-filter-btn').forEach(btn => {
+                if (btn.innerText === cat) {
+                    btn.className = "note-filter-btn px-3 py-1 text-xs rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30";
+                } else {
+                    btn.className = "note-filter-btn px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200";
+                }
+            });
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const grid = document.getElementById('notes-grid');
+            const search = (document.getElementById('search-notes')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            let filtered = currentNoteFilter === 'All' ? state.notes : state.notes.filter(n => n.category === currentNoteFilter);
+            filtered = filtered.filter(n => n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-3 py-8 text-center">No notes found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(note => {
+                const unreviewedClass = note.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = note.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW / UNREVIEWED</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openNoteModal('${note.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-4 flex flex-col justify-between hover:border-sky-500/50 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/50">${note.category}</span>
+                                <div class="flex items-center space-x-2">
+                                    ${badge}
+                                    <span class="text-[10px] text-slate-500">${note.date || ''}</span>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-slate-200 text-base mb-2">${note.title}</h3>
+                            <p class="text-xs text-slate-400 whitespace-pre-wrap leading-relaxed">${note.content}</p>
+                        </div>
+                        <div class="flex justify-end space-x-2 mt-4 pt-3 border-t border-slate-800/60">
+                            <button onclick="deleteNote('${note.id}', event)" class="text-xs text-slate-400 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==================== TASKS LOGIC ====================
+        function openTaskModal(id = null) {
+            const modal = document.getElementById('modal-task');
+            if (id) {
+                markReviewed('tasks', id);
+                const task = state.tasks.find(t => t.id === id);
+                document.getElementById('task-modal-title').innerText = "Edit Task";
+                document.getElementById('task-id').value = task.id;
+                document.getElementById('task-title').value = task.title;
+                document.getElementById('task-assignee').value = task.assignee || '';
+                document.getElementById('task-status').value = task.status;
+            } else {
+                document.getElementById('task-modal-title').innerText = "New Task";
+                document.getElementById('task-id').value = '';
+                document.getElementById('task-title').value = '';
+                document.getElementById('task-assignee').value = '';
+                document.getElementById('task-status').value = 'To Do';
+            }
+            modal.classList.remove('hidden');
+            renderTasks();
+        }
+
+        function saveTask() {
+            const id = document.getElementById('task-id').value;
+            const title = document.getElementById('task-title').value.trim();
+            const assignee = document.getElementById('task-assignee').value.trim();
+            const status = document.getElementById('task-status').value;
+
+            if (!title) return alert('Please enter a task description.');
+
+            if (id) {
+                const task = state.tasks.find(t => t.id === id);
+                task.title = title;
+                task.assignee = assignee;
+                task.status = status;
+                delete task.isNew;
+            } else {
+                state.tasks.push({ id: Date.now().toString(), title, assignee, status });
+            }
+
+            saveToLocalStorage();
+            renderTasks();
+            closeModal('modal-task');
+        }
+
+        function deleteTask(id, event) {
+            event.stopPropagation();
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            saveToLocalStorage();
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const cols = {
+                'To Do': document.getElementById('col-todo'),
+                'In Progress': document.getElementById('col-in-progress'),
+                'Completed': document.getElementById('col-completed')
+            };
+            const search = (document.getElementById('search-tasks')?.value || '').toLowerCase();
+
+            Object.values(cols).forEach(c => c.innerHTML = '');
+            let counts = { 'To Do': 0, 'In Progress': 0, 'Completed': 0 };
+
+            const filtered = state.tasks.filter(t => t.title.toLowerCase().includes(search) || (t.assignee && t.assignee.toLowerCase().includes(search)));
+
+            filtered.forEach(task => {
+                counts[task.status]++;
+                const unreviewedClass = task.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = task.isNew ? `<span class="text-[8px] font-bold px-1 py-0.5 rounded bg-sky-500 text-slate-950">NEW</span>` : '';
+
+                cols[task.status].innerHTML += `
+                    <div onclick="openTaskModal('${task.id}')" class="${unreviewedClass} border border-slate-800 rounded p-3 text-xs flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-slate-200 font-medium">${task.title}</span>
+                            ${badge}
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/50">
+                            <span>${task.assignee ? `<i data-lucide="user" class="w-3 h-3 inline mr-1"></i>${task.assignee}` : 'Unassigned'}</span>
+                            <button onclick="deleteTask('${task.id}', event)" class="hover:text-red-400"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('count-todo').innerText = counts['To Do'];
+            document.getElementById('count-in-progress').innerText = counts['In Progress'];
+            document.getElementById('count-completed').innerText = counts['Completed'];
+            lucide.createIcons();
+        }
+
+        // ==================== CLASSES & SKILLS LOGIC ====================
+        function openClassModal(id = null) {
+            const modal = document.getElementById('modal-class');
+            if (id) {
+                markReviewed('classes', id);
+                const c = state.classes.find(cls => cls.id === id);
+                document.getElementById('class-modal-title').innerText = "Edit Class Specification";
+                document.getElementById('class-id').value = c.id;
+                document.getElementById('class-name').value = c.name;
+                document.getElementById('class-desc').value = c.desc;
+                document.getElementById('subclass-1').value = c.subclasses ? c.subclasses[0] || '' : '';
+                document.getElementById('subclass-2').value = c.subclasses ? c.subclasses[1] || '' : '';
+                document.getElementById('subclass-3').value = c.subclasses ? c.subclasses[2] || '' : '';
+                document.getElementById('class-skills').value = c.skills || '';
+            } else {
+                document.getElementById('class-modal-title').innerText = "Add Class Specification";
+                document.getElementById('class-id').value = '';
+                document.getElementById('class-name').value = '';
+                document.getElementById('class-desc').value = '';
+                document.getElementById('subclass-1').value = '';
+                document.getElementById('subclass-2').value = '';
+                document.getElementById('subclass-3').value = '';
+                document.getElementById('class-skills').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderClasses();
+        }
+
+        function saveClass() {
+            const id = document.getElementById('class-id').value;
+            const name = document.getElementById('class-name').value.trim();
+            const desc = document.getElementById('class-desc').value.trim();
+            const subclasses = [
+                document.getElementById('subclass-1').value.trim(),
+                document.getElementById('subclass-2').value.trim(),
+                document.getElementById('subclass-3').value.trim()
+            ].filter(Boolean);
+            const skills = document.getElementById('class-skills').value.trim();
+
+            if (!name) return alert('Class name is required.');
+
+            if (id) {
+                const c = state.classes.find(cls => cls.id === id);
+                c.name = name;
+                c.desc = desc;
+                c.subclasses = subclasses;
+                c.skills = skills;
+                delete c.isNew;
+            } else {
+                state.classes.push({ id: Date.now().toString(), name, desc, subclasses, skills });
+            }
+
+            saveToLocalStorage();
+            renderClasses();
+            closeModal('modal-class');
+        }
+
+        function deleteClass(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this class?')) {
+                state.classes = state.classes.filter(c => c.id !== id);
+                saveToLocalStorage();
+                renderClasses();
+            }
+        }
+
+        function openSkillModal(id = null) {
+            if (state.classes.length === 0) {
+                return alert("Please add at least one base class before creating skills.");
+            }
+            const modal = document.getElementById('modal-skill');
+            const classSelect = document.getElementById('skill-class');
+
+            classSelect.innerHTML = state.classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+            if (id) {
+                markReviewed('skills', id);
+                const sk = state.skills.find(s => s.id === id);
+                document.getElementById('skill-modal-title').innerText = "Edit Skill";
+                document.getElementById('skill-id').value = sk.id;
+                document.getElementById('skill-name').value = sk.name;
+                document.getElementById('skill-class').value = sk.className || state.classes[0].name;
+                document.getElementById('skill-prereqs').value = sk.prereqs || '';
+                document.getElementById('skill-ranks').value = sk.ranks || '';
+                document.getElementById('skill-cost').value = sk.cost || '';
+                document.getElementById('skill-cooldown').value = sk.cooldown || '';
+                document.getElementById('skill-desc').value = sk.desc || '';
+            } else {
+                document.getElementById('skill-modal-title').innerText = "New Skill";
+                document.getElementById('skill-id').value = '';
+                document.getElementById('skill-name').value = '';
+                document.getElementById('skill-class').value = state.classes[0].name;
+                document.getElementById('skill-prereqs').value = '';
+                document.getElementById('skill-ranks').value = '';
+                document.getElementById('skill-cost').value = '';
+                document.getElementById('skill-cooldown').value = '';
+                document.getElementById('skill-desc').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function saveSkill() {
+            const id = document.getElementById('skill-id').value;
+            const name = document.getElementById('skill-name').value.trim();
+            const className = document.getElementById('skill-class').value;
+            const prereqs = document.getElementById('skill-prereqs').value.trim();
+            const ranks = document.getElementById('skill-ranks').value.trim();
+            const cost = document.getElementById('skill-cost').value.trim();
+            const cooldown = document.getElementById('skill-cooldown').value.trim();
+            const desc = document.getElementById('skill-desc').value.trim();
+
+            if (!name) return alert('Skill name is required.');
+
+            if (id) {
+                const sk = state.skills.find(s => s.id === id);
+                sk.name = name;
+                sk.className = className;
+                sk.prereqs = prereqs;
+                sk.ranks = ranks;
+                sk.cost = cost;
+                sk.cooldown = cooldown;
+                sk.desc = desc;
+                delete sk.isNew;
+            } else {
+                state.skills.push({ id: Date.now().toString(), name, className, prereqs, ranks, cost, cooldown, desc });
+            }
+
+            saveToLocalStorage();
+            renderClasses();
+            closeModal('modal-skill');
+        }
+
+        function deleteSkill(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this skill?')) {
+                state.skills = state.skills.filter(s => s.id !== id);
+                saveToLocalStorage();
+                renderClasses();
+            }
+        }
+
+        function openSubclassModal(id = null) {
+            if (state.classes.length === 0) {
+                return alert("Please add a base class first.");
+            }
+            const modal = document.getElementById('modal-subclass');
+            const baseSelect = document.getElementById('subclass-base-class');
+
+            baseSelect.innerHTML = state.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+            if (id) {
+                markReviewed('subclasses', id);
+                const sub = state.subclasses.find(s => s.id === id);
+                document.getElementById('subclass-modal-title').innerText = "Edit Subclass Config";
+                document.getElementById('subclass-id').value = sub.id;
+                document.getElementById('subclass-base-class').value = sub.baseClassId;
+                populateSubclassDropdowns();
+                document.getElementById('subclass-existing-name').value = sub.name;
+                document.getElementById('subclass-playstyle').value = sub.playstyle;
+                document.getElementById('subclass-desc').value = sub.desc || '';
+                
+                const checkboxes = document.querySelectorAll('.subclass-skill-check');
+                checkboxes.forEach(cb => {
+                    cb.checked = (sub.skills || []).includes(cb.value);
+                });
+            } else {
+                document.getElementById('subclass-modal-title').innerText = "Configure New Subclass";
+                document.getElementById('subclass-id').value = '';
+                document.getElementById('subclass-base-class').value = state.classes[0].id;
+                populateSubclassDropdowns();
+                document.getElementById('subclass-playstyle').value = 'DPS';
+                document.getElementById('subclass-desc').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function populateSubclassDropdowns() {
+            const baseClassId = document.getElementById('subclass-base-class').value;
+            const baseClass = state.classes.find(c => c.id === baseClassId);
+
+            const existingSubSelect = document.getElementById('subclass-existing-name');
+            const skillsChecklist = document.getElementById('subclass-skills-checklist');
+
+            if (!baseClass) return;
+
+            if (baseClass.subclasses && baseClass.subclasses.length > 0) {
+                existingSubSelect.innerHTML = baseClass.subclasses.map(s => `<option value="${s}">${s}</option>`).join('');
+            } else {
+                existingSubSelect.innerHTML = `<option value="Default Subclass">Default Subclass</option>`;
+            }
+
+            const matchingSkills = state.skills.filter(s => s.className === baseClass.name);
+
+            skillsChecklist.innerHTML = '';
+            if (matchingSkills.length === 0) {
+                skillsChecklist.innerHTML = `<span class="text-xs text-slate-500">No standalone skills defined for ${baseClass.name} yet.</span>`;
+            } else {
+                matchingSkills.forEach(s => {
+                    skillsChecklist.innerHTML += `
+                        <label class="flex items-center space-x-2 text-xs text-slate-200 cursor-pointer">
+                            <input type="checkbox" value="${s.name}" class="subclass-skill-check rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-0">
+                            <span>${s.name} <span class="text-[10px] text-slate-500">(${s.prereqs || 'Lvl 1'})</span></span>
+                        </label>
+                    `;
+                });
+            }
+        }
+
+        function saveSubclass() {
+            const id = document.getElementById('subclass-id').value;
+            const baseClassId = document.getElementById('subclass-base-class').value;
+            const name = document.getElementById('subclass-existing-name').value;
+            const playstyle = document.getElementById('subclass-playstyle').value;
+            const desc = document.getElementById('subclass-desc').value.trim();
+
+            const checkedSkills = Array.from(document.querySelectorAll('.subclass-skill-check:checked')).map(cb => cb.value);
+
+            if (!name) return alert('Subclass name required.');
+
+            if (id) {
+                const sub = state.subclasses.find(s => s.id === id);
+                sub.baseClassId = baseClassId;
+                sub.name = name;
+                sub.playstyle = playstyle;
+                sub.skills = checkedSkills;
+                sub.desc = desc;
+                delete sub.isNew;
+            } else {
+                state.subclasses.push({ id: Date.now().toString(), baseClassId, name, playstyle, skills: checkedSkills, desc });
+            }
+
+            saveToLocalStorage();
+            renderClasses();
+            closeModal('modal-subclass');
+        }
+
+        function deleteSubclass(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this subclass configuration?')) {
+                state.subclasses = state.subclasses.filter(s => s.id !== id);
+                saveToLocalStorage();
+                renderClasses();
+            }
+        }
+
+        function renderClasses() {
+            const grid = document.getElementById('classes-grid');
+            const search = (document.getElementById('search-classes')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = state.classes.filter(c => 
+                c.name.toLowerCase().includes(search) || 
+                (c.desc && c.desc.toLowerCase().includes(search))
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-2 py-8 text-center">No classes found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const classSkills = state.skills.filter(s => s.className === c.name);
+                const classSubconfigs = state.subclasses.filter(s => s.baseClassId === c.id);
+                const unreviewedClass = c.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = c.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openClassModal('${c.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-5 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-lg font-bold text-sky-400 flex items-center space-x-2">
+                                        <i data-lucide="sword" class="w-5 h-5 text-sky-400"></i><span>${c.name}</span>
+                                    </h3>
+                                    ${c.desc ? `<p class="text-xs text-slate-300 mt-1">${c.desc}</p>` : ''}
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    ${badge}
+                                    <button onclick="deleteClass('${c.id}', event)" class="text-slate-400 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Subclasses Section -->
+                            <div class="mb-4 bg-slate-950 p-3 rounded border border-slate-800">
+                                <span class="text-[10px] font-semibold text-amber-400 uppercase tracking-wider block mb-2">Level 10 Subclasses:</span>
+                                ${c.subclasses && c.subclasses.length > 0 ? `
+                                    <div class="space-y-2">
+                                        ${c.subclasses.map(subName => {
+                                            const subConfig = classSubconfigs.find(sc => sc.name === subName);
+                                            return `
+                                                <div ${subConfig ? `onclick="event.stopPropagation(); openSubclassModal('${subConfig.id}')"` : ''} class="bg-slate-900 p-2 rounded border border-slate-800/80 hover:border-amber-500/40 transition">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="text-xs font-bold text-slate-200">${subName}</span>
+                                                        ${subConfig ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800/50 font-semibold">${subConfig.playstyle}</span>` : '<span class="text-[10px] text-slate-500 italic">Unconfigured</span>'}
+                                                    </div>
+                                                    ${subConfig && subConfig.desc ? `<p class="text-[11px] text-slate-400 mt-1">${subConfig.desc}</p>` : ''}
+                                                    ${subConfig && subConfig.skills && subConfig.skills.length > 0 ? `
+                                                        <div class="flex flex-wrap gap-1 mt-1.5">
+                                                            ${subConfig.skills.map(sk => `<span class="text-[9px] bg-slate-800 text-sky-300 px-1.5 py-0.5 rounded border border-slate-700">${sk}</span>`).join('')}
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                ` : `
+                                    <p class="text-xs text-slate-500 italic">No subclasses assigned yet.</p>
+                                `}
+                            </div>
+
+                            <!-- Skills Tree Section -->
+                            <div>
+                                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Standalone Skill Tree (${classSkills.length}):</span>
+                                ${classSkills.length > 0 ? `
+                                    <div class="space-y-2">
+                                        ${classSkills.map(sk => `
+                                            <div onclick="event.stopPropagation(); openSkillModal('${sk.id}')" class="bg-slate-950 p-2.5 rounded border border-slate-800 hover:border-sky-500/50 transition flex justify-between items-start">
+                                                <div>
+                                                    <div class="flex items-center space-x-2 mb-1">
+                                                        <span class="text-xs font-bold text-sky-300">${sk.name}</span>
+                                                        ${sk.prereqs ? `<span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">${sk.prereqs}</span>` : ''}
+                                                        ${sk.ranks ? `<span class="text-[10px] bg-sky-950 text-sky-400 px-1.5 py-0.5 rounded border border-sky-800/50">${sk.ranks} Ranks</span>` : ''}
+                                                    </div>
+                                                    <p class="text-[11px] text-slate-400 mb-1">${sk.desc || 'No description.'}</p>
+                                                    <div class="flex items-center space-x-3 text-[10px] text-slate-500">
+                                                        ${sk.cost ? `<span>Cost: ${sk.cost}</span>` : ''}
+                                                        ${sk.cooldown ? `<span>CD: ${sk.cooldown}</span>` : ''}
+                                                    </div>
+                                                </div>
+                                                <button onclick="deleteSkill('${sk.id}', event)" class="text-slate-500 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : `
+                                    <p class="text-xs text-slate-600 bg-slate-950 p-2.5 rounded border border-slate-800/50">No standalone skills defined yet. Click "New Skill" above to add skills.</p>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==================== ITEMS LOGIC ====================
+        function openItemModal(id = null) {
+            const modal = document.getElementById('modal-item');
+            if (id) {
+                markReviewed('items', id);
+                const item = state.items.find(i => i.id === id);
+                document.getElementById('item-modal-title').innerText = "Edit Item";
+                document.getElementById('item-id').value = item.id;
+                document.getElementById('item-name').value = item.name;
+                document.getElementById('item-type').value = item.type;
+                document.getElementById('item-rarity').value = item.rarity;
+                document.getElementById('item-stats').value = item.stats;
+            } else {
+                document.getElementById('item-modal-title').innerText = "Add Item or Gear";
+                document.getElementById('item-id').value = '';
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-type').value = 'Weapon';
+                document.getElementById('item-rarity').value = 'Common';
+                document.getElementById('item-stats').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderItems();
+        }
+
+        function saveItem() {
+            const id = document.getElementById('item-id').value;
+            const name = document.getElementById('item-name').value.trim();
+            const type = document.getElementById('item-type').value;
+            const rarity = document.getElementById('item-rarity').value;
+            const stats = document.getElementById('item-stats').value.trim();
+
+            if (!name) return alert('Item name is required.');
+
+            if (id) {
+                const item = state.items.find(i => i.id === id);
+                item.name = name;
+                item.type = type;
+                item.rarity = rarity;
+                item.stats = stats;
+                delete item.isNew;
+            } else {
+                state.items.push({ id: Date.now().toString(), name, type, rarity, stats });
+            }
+
+            saveToLocalStorage();
+            renderItems();
+            closeModal('modal-item');
+        }
+
+        function deleteItem(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this item?')) {
+                state.items = state.items.filter(i => i.id !== id);
+                saveToLocalStorage();
+                renderItems();
+            }
+        }
+
+        function getRarityColor(rarity) {
+            switch(rarity) {
+                case 'Common': return 'text-slate-300 border-slate-700 bg-slate-800';
+                case 'Uncommon': return 'text-emerald-400 border-emerald-800/60 bg-emerald-950/40';
+                case 'Rare': return 'text-sky-400 border-sky-800/60 bg-sky-950/40';
+                case 'Epic': return 'text-purple-400 border-purple-800/60 bg-purple-950/40';
+                case 'Legendary': return 'text-amber-400 border-amber-800/60 bg-amber-950/40';
+                default: return 'text-slate-300 border-slate-700 bg-slate-800';
+            }
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            const search = (document.getElementById('search-items')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = state.items.filter(i => i.name.toLowerCase().includes(search) || i.type.toLowerCase().includes(search) || i.rarity.toLowerCase().includes(search));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-3 py-8 text-center">No items found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const rarityStyle = getRarityColor(item.rarity);
+                const unreviewedClass = item.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = item.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openItemModal('${item.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-4 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded border ${rarityStyle}">${item.rarity} ${item.type}</span>
+                                ${badge}
+                            </div>
+                            <h3 class="font-bold text-slate-100 text-base mb-2">${item.name}</h3>
+                            <p class="text-xs text-slate-400 whitespace-pre-wrap leading-relaxed bg-slate-950 p-2.5 rounded border border-slate-800/60">${item.stats || 'No stats or details specified.'}</p>
+                        </div>
+                        <div class="flex justify-end space-x-2 mt-4 pt-3 border-t border-slate-800/60">
+                            <button onclick="deleteItem('${item.id}', event)" class="text-xs text-slate-400 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==================== WORLD: REGIONS & GUILDS LOGIC ====================
+        function openRegionModal(id = null) {
+            const modal = document.getElementById('modal-region');
+            if (id) {
+                markReviewed('regions', id);
+                const r = state.regions.find(reg => reg.id === id);
+                document.getElementById('region-modal-title').innerText = "Edit Region";
+                document.getElementById('region-id').value = r.id;
+                document.getElementById('region-name').value = r.name;
+                document.getElementById('region-desc').value = r.desc;
+            } else {
+                document.getElementById('region-modal-title').innerText = "Add Region";
+                document.getElementById('region-id').value = '';
+                document.getElementById('region-name').value = '';
+                document.getElementById('region-desc').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderRegions();
+        }
+
+        function saveRegion() {
+            const id = document.getElementById('region-id').value;
+            const name = document.getElementById('region-name').value.trim();
+            const desc = document.getElementById('region-desc').value.trim();
+
+            if (!name) return alert('Region name is required.');
+
+            if (id) {
+                const r = state.regions.find(reg => reg.id === id);
+                r.name = name;
+                r.desc = desc;
+                delete r.isNew;
+            } else {
+                state.regions.push({ id: Date.now().toString(), name, desc });
+            }
+
+            saveToLocalStorage();
+            renderRegions();
+            closeModal('modal-region');
+        }
+
+        function deleteRegion(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this region?')) {
+                state.regions = state.regions.filter(r => r.id !== id);
+                saveToLocalStorage();
+                renderRegions();
+            }
+        }
+
+        function renderRegions() {
+            const list = document.getElementById('regions-list');
+            const search = (document.getElementById('search-regions')?.value || '').toLowerCase();
+            list.innerHTML = '';
+
+            const filtered = state.regions.filter(r => r.name.toLowerCase().includes(search) || (r.desc && r.desc.toLowerCase().includes(search)));
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">No regions added yet.</p>`;
+                return;
+            }
+
+            filtered.forEach(r => {
+                const unreviewedClass = r.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = r.isNew ? `<span class="text-[8px] font-bold px-1 py-0.5 rounded bg-sky-500 text-slate-950">NEW</span>` : '';
+
+                list.innerHTML += `
+                    <div onclick="openRegionModal('${r.id}')" class="${unreviewedClass} border border-slate-800 rounded p-3 cursor-pointer hover:border-sky-500/50 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-sky-400 text-sm">${r.name}</h4>
+                            <div class="flex items-center space-x-2">
+                                ${badge}
+                                <button onclick="deleteRegion('${r.id}', event)" class="text-slate-500 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">${r.desc || 'No description.'}</p>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function openGuildModal(id = null) {
+            const modal = document.getElementById('modal-guild');
+            if (id) {
+                markReviewed('guilds', id);
+                const g = state.guilds.find(guild => guild.id === id);
+                document.getElementById('guild-modal-title').innerText = "Edit Guild / Faction";
+                document.getElementById('guild-id').value = g.id;
+                document.getElementById('guild-name').value = g.name;
+                document.getElementById('guild-desc').value = g.desc;
+            } else {
+                document.getElementById('guild-modal-title').innerText = "Add Guild / Faction";
+                document.getElementById('guild-id').value = '';
+                document.getElementById('guild-name').value = '';
+                document.getElementById('guild-desc').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderGuilds();
+        }
+
+        function saveGuild() {
+            const id = document.getElementById('guild-id').value;
+            const name = document.getElementById('guild-name').value.trim();
+            const desc = document.getElementById('guild-desc').value.trim();
+
+            if (!name) return alert('Guild name is required.');
+
+            if (id) {
+                const g = state.guilds.find(guild => guild.id === id);
+                g.name = name;
+                g.desc = desc;
+                delete g.isNew;
+            } else {
+                state.guilds.push({ id: Date.now().toString(), name, desc });
+            }
+
+            saveToLocalStorage();
+            renderGuilds();
+            closeModal('modal-guild');
+        }
+
+        function deleteGuild(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this guild?')) {
+                state.guilds = state.guilds.filter(g => g.id !== id);
+                saveToLocalStorage();
+                renderGuilds();
+            }
+        }
+
+        function renderGuilds() {
+            const list = document.getElementById('guilds-list');
+            const search = (document.getElementById('search-guilds')?.value || '').toLowerCase();
+            list.innerHTML = '';
+
+            const filtered = state.guilds.filter(g => g.name.toLowerCase().includes(search) || (g.desc && g.desc.toLowerCase().includes(search)));
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">No guilds added yet.</p>`;
+                return;
+            }
+
+            filtered.forEach(g => {
+                const unreviewedClass = g.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = g.isNew ? `<span class="text-[8px] font-bold px-1 py-0.5 rounded bg-sky-500 text-slate-950">NEW</span>` : '';
+
+                list.innerHTML += `
+                    <div onclick="openGuildModal('${g.id}')" class="${unreviewedClass} border border-slate-800 rounded p-3 cursor-pointer hover:border-sky-500/50 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-amber-400 text-sm">${g.name}</h4>
+                            <div class="flex items-center space-x-2">
+                                ${badge}
+                                <button onclick="deleteGuild('${g.id}', event)" class="text-slate-500 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">${g.desc || 'No description.'}</p>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==================== NPCS LOGIC ====================
+        function openNpcModal(id = null) {
+            const modal = document.getElementById('modal-npc');
+            const regionSelect = document.getElementById('npc-region');
+            const guildSelect = document.getElementById('npc-guild');
+
+            regionSelect.innerHTML = '<option value="Unassigned">Unassigned</option>' + state.regions.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
+            guildSelect.innerHTML = '<option value="Unassigned">Unassigned</option>' + state.guilds.map(g => `<option value="${g.name}">${g.name}</option>`).join('');
+
+            if (id) {
+                markReviewed('npcs', id);
+                const npc = state.npcs.find(n => n.id === id);
+                document.getElementById('npc-modal-title').innerText = "Edit NPC";
+                document.getElementById('npc-id').value = npc.id;
+                document.getElementById('npc-name').value = npc.name;
+                document.getElementById('npc-region').value = npc.region || 'Unassigned';
+                document.getElementById('npc-guild').value = npc.guild || 'Unassigned';
+                document.getElementById('npc-role').value = npc.role;
+            } else {
+                document.getElementById('npc-modal-title').innerText = "Add NPC";
+                document.getElementById('npc-id').value = '';
+                document.getElementById('npc-name').value = '';
+                document.getElementById('npc-region').value = 'Unassigned';
+                document.getElementById('npc-guild').value = 'Unassigned';
+                document.getElementById('npc-role').value = '';
+            }
+            modal.classList.remove('hidden');
+            renderNpcs();
+        }
+
+        function saveNpc() {
+            const id = document.getElementById('npc-id').value;
+            const name = document.getElementById('npc-name').value.trim();
+            const region = document.getElementById('npc-region').value;
+            const guild = document.getElementById('npc-guild').value;
+            const role = document.getElementById('npc-role').value.trim();
+
+            if (!name) return alert('NPC name is required.');
+
+            if (id) {
+                const npc = state.npcs.find(n => n.id === id);
+                npc.name = name;
+                npc.region = region;
+                npc.guild = guild;
+                npc.role = role;
+                delete npc.isNew;
+            } else {
+                state.npcs.push({ id: Date.now().toString(), name, region, guild, role });
+            }
+
+            saveToLocalStorage();
+            renderNpcs();
+            closeModal('modal-npc');
+        }
+
+        function deleteNpc(id, event) {
+            event.stopPropagation();
+            if (confirm('Delete this NPC?')) {
+                state.npcs = state.npcs.filter(n => n.id !== id);
+                saveToLocalStorage();
+                renderNpcs();
+            }
+        }
+
+        function renderNpcs() {
+            const grid = document.getElementById('npcs-grid');
+            const search = (document.getElementById('search-npcs')?.value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = state.npcs.filter(n => 
+                n.name.toLowerCase().includes(search) || 
+                (n.region && n.region.toLowerCase().includes(search)) || 
+                (n.guild && n.guild.toLowerCase().includes(search)) ||
+                (n.role && n.role.toLowerCase().includes(search))
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 col-span-3 py-8 text-center">No NPCs found matching your filter.</p>`;
+                return;
+            }
+
+            filtered.forEach(npc => {
+                const unreviewedClass = npc.isNew ? 'unreviewed-glow bg-sky-950/20' : 'bg-slate-900';
+                const badge = npc.isNew ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 animate-pulse">NEW</span>` : '';
+
+                grid.innerHTML += `
+                    <div onclick="openNpcModal('${npc.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-4 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded">
+                                    ${npc.region || 'Unassigned'}
+                                </span>
+                                ${badge}
+                            </div>
+                            <h3 class="font-bold text-slate-100 text-base mb-1">${npc.name}</h3>
+                            ${npc.guild && npc.guild !== 'Unassigned' ? `<span class="text-[11px] text-amber-400 block mb-2 font-medium"><i data-lucide="shield" class="w-3 h-3 inline mr-1"></i>${npc.guild}</span>` : ''}
+                            <p class="text-xs text-slate-400 whitespace-pre-wrap leading-relaxed bg-slate-950 p-2.5 rounded border border-slate-800/60 mb-3">${npc.role || 'No role notes available.'}</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-800/60">
+                            <button onclick="showNpcQuests('${npc.name.replace(/'/g, "\\'")}', event)" class="text-xs text-sky-400 hover:text-sky-300 flex items-center space-x-1">
+                                <i data-lucide="scroll" class="w-3.5 h-3.5"></i>
+                                <span>View Quests</span>
+                            </button>
+                            <button onclick="deleteNpc('${npc.id}', event)" class="text-xs text-slate-400 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
+
