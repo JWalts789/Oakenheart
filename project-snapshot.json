@@ -1,0 +1,863 @@
+{
+  "notes": [
+    {
+      "id": "1790442262337",
+      "title": "Sweetbriar, Verdantia",
+      "category": "World Locations",
+      "content": "Oakheart Online begins in Sweetbriar, a working village of gardens, forge, pasture, lake, craft yards and old grove roads. The current playable map includes a forest loop with respawning scavengers, the forgotten arch and a solo Hollowstone cave-raid rehearsal. The boundary bell, wardstones and black ash anchor the prologue. The tone is cozy fantasy with self-aware jokes.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296001",
+      "title": "Current build and MMO scope",
+      "category": "Game Mechanics",
+      "content": "UE 5.8 C++ single-player action RPG prototype. The title is Oakheart Online, the realm is Verdantia, and the starting region is Sweetbriar. The game has local saves, third-person combat, quests, activities, UI, a class creator and a title screen. Networked parties, server authority, matchmaking, shared loot and a persistent MMO world are future work.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296002",
+      "title": "Prologue and encounters",
+      "category": "Lore & History",
+      "content": "The player rescues Alder's three sheep, returns Torven's ward hammer, drives off three road-ward raiders, consults Istren and defeats the Thorn Warden before reporting back to Alder. Noll teaches pier fishing and Pell explains the waystone. The Hollowstone rehearsal is a separate repeatable solo raid primer with two rooms, crystal seals, a Sentinel boss and a claimable reward chest. The in-game tracker uses stages rather than formal quest titles.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296003",
+      "title": "Warrior: playable first pass",
+      "category": "Game Mechanics",
+      "content": "Warrior can be chosen in character creation. Its stamina, guard, 15 active techniques, four shared passives, level/attribute/skill points, draggable four-slot hotbar and level-10 Slayer/Bastion/Marshal paths are playable. Advanced modifiers, purchased path passives, capstones, party effects and dedicated technique animation sets remain unfinished. The browser Warrior planner is a separate full design reference.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296004",
+      "title": "Magic Man: design only",
+      "category": "Game Mechanics",
+      "content": "The level 1-20 Magic Man catalogue, interactive planner, icons and shareable PDF exist, but Magic Man cannot yet be chosen or played in Unreal. Its five foundation pocket tricks include Charcoal, Still Lit; Piece of Ice; Dirt From The Ground; Definitely Not Vodka; and Vial of Strange Powder. At level 10 it branches into Spell Tosser, Feelin GoodMan or Molecule Bender. Only Molecule Bender discovers real magic.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296005",
+      "title": "Playable lifeskills",
+      "category": "Game Mechanics",
+      "content": "Woodcutting, Mining, Herbalism, Cooking, Alchemy, Smithing, Combat footwork practice and pier Fishing are playable activities. Station work has authored clips, fitted tools, spatial cues, approach-to-work positioning, recipe costs, rewards, cooldowns and saved profession XP. Station rank displays as 1 + floor(profession XP / 40). Trading caravans and tavern Gambling/Liar's Dice are future designs.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296006",
+      "title": "Current quality priorities",
+      "category": "Game Mechanics",
+      "content": "Continue a human-reviewed combat animation pass: the blade-contact physics and three-swing combo work, but more natural, weighty authored motion and technique-specific clips are still needed. Correct the alchemy mortar/jug placement: the current mortar sits about 40 cm below the tabletop, and Cooking/Alchemy contact still needs final in-game visual review. Fix Alder/waystone nameplates overlapping a cottage in the west-lane render. Keep checking both body forms, wrists, shoulders, hands and apparel in motion.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296007",
+      "title": "Village and asset audit",
+      "category": "World Locations",
+      "content": "Latest placed-level survey: 661 inventoried village actors, 250 major props, zero road intrusions, zero major prop overlaps and zero hidden road-collision intrusions. Nearest market stock is 361 cm from the waystone centre. Asset sweep loaded 914 assets across 1,849 actors with zero reported missing/placeholder issues. Route (612 samples), quest smoke, water (18 checks) and expansion (62 checks) passed; visual polish remains a separate review.",
+      "date": "9/30/2026"
+    },
+    {
+      "id": "1790807296008",
+      "title": "Tools and pipeline status",
+      "category": "Game Mechanics",
+      "content": "Blender and UE5 MCP configurations exist; live Unreal MCP tools require an open, connected editor. Game Development Studio, Build 3D Game Rooms and Unreal Editor Skills are installed. Oakheart's source models are FBX, so Game Development Studio's GLB validation/catalog and visual-debug adapter are not yet wired to this project. Cascadeur setup was cancelled; no Cascadeur app or Live Link integration was installed.",
+      "date": "9/30/2026"
+    }
+  ],
+  "quests": [
+    {
+      "id": "1790443375448",
+      "name": "A Small Favour",
+      "giver": "Alder - market gardener",
+      "goals": "Meet Alder by the market garden. Rescue three sheep from the north pasture (0/3). Report the black ash to Alder. This dashboard title is a chapter label; the game tracks stages.",
+      "nextQuest": "Tools Of The Trade",
+      "isNew": true
+    },
+    {
+      "id": "1790443469028",
+      "name": "Tools Of The Trade",
+      "giver": "Torven - ward smith",
+      "goals": "Speak to Torven at the forge. Recover his ward hammer beside the old well. Return it to repair the bell fitting and unlock sword upgrades.",
+      "nextQuest": "A Proper Hero",
+      "isNew": true
+    },
+    {
+      "id": "1790443702790",
+      "name": "A Proper Hero",
+      "giver": "Torven / Istren",
+      "goals": "Drive off three road-ward raiders (0/3). Consult Istren at the standing stones. Defeat the Thorn Warden at the ruined arch. Tell Alder the boundary holds.",
+      "nextQuest": "A Village Worth Saving",
+      "isNew": true
+    },
+    {
+      "id": "1790443824093",
+      "name": "A Village Worth Saving",
+      "giver": "Alder - market gardener",
+      "goals": "Prologue complete. Explore Sweetbriar, train skills, fish at the pier, grind respawning forest scavengers and practice the separate Hollowstone cave rehearsal.",
+      "nextQuest": "",
+      "isNew": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1790807296009",
+      "title": "Polish player combat animations",
+      "description": "Author and visually review weighty sword swings, natural shoulders/elbows/wrists, reliable palm grip and dedicated technique clips on both body forms.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "High",
+      "isNew": true
+    },
+    {
+      "id": "1790807296010",
+      "title": "Fix alchemy prop placement",
+      "description": "Raise the mortar and jug to their workbench surface, then complete Cooking/Alchemy in-game hand-contact review.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "High",
+      "isNew": true
+    },
+    {
+      "id": "1790807296011",
+      "title": "Repair village nameplate composition",
+      "description": "Resolve Alder/waystone label overlap and cottage-wall projection in the west-lane camera.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "Medium",
+      "isNew": true
+    },
+    {
+      "id": "1790807296012",
+      "title": "Implement playable Magic Man",
+      "description": "Convert the finished class catalogue and planner into creator selection, mana, skills, three level-10 paths and runtime effects.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "Future",
+      "isNew": true
+    },
+    {
+      "id": "1790807296013",
+      "title": "Connect asset validation pipeline",
+      "description": "Define FBX-to-GLB review exports and a project visual-debug adapter before using Game Development Studio for systematic asset comparisons.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "Medium",
+      "isNew": true
+    },
+    {
+      "id": "1790807296014",
+      "title": "Design networked MMO foundation",
+      "description": "Plan server authority, parties, shared encounters, persistence and multiplayer testing separately from the current solo prototype.",
+      "category": "Game Mechanics",
+      "status": "To Do",
+      "priority": "Future",
+      "isNew": true
+    }
+  ],
+  "classes": [
+    {
+      "id": "1790444040161",
+      "name": "Warrior",
+      "desc": "Playable first pass: stamina, guard, 15 active techniques, level/attribute/skill points, four hotbar slots and level-10 paths. Full planner contains later modifiers/passives/capstones.",
+      "subclasses": [
+        "Slayer",
+        "Bastion",
+        "Marshal"
+      ],
+      "skills": "15 playable active techniques; four shared passives; three free path-resource passives. See the Warrior training book in-game for live values.",
+      "isNew": true,
+      "status": "Playable first pass"
+    },
+    {
+      "id": "1790807296015",
+      "name": "Magic Man",
+      "desc": "Complete level 1-20 design, planner, icons and PDF. Not yet playable in Unreal. Foundation spells are pocket tricks; only Molecule Bender gains real magic.",
+      "subclasses": [
+        "Spell Tosser",
+        "Feelin GoodMan",
+        "Molecule Bender"
+      ],
+      "skills": "Five foundation skills and three path designs are documented; no runtime class yet.",
+      "status": "Design only",
+      "isNew": true
+    }
+  ],
+  "subclasses": [
+    {
+      "id": "1790807296016",
+      "name": "Slayer",
+      "class": "Warrior",
+      "parentClass": "Warrior",
+      "desc": "Momentum-driven DPS and decisive sword finishes; playable first pass.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296017",
+      "name": "Bastion",
+      "class": "Warrior",
+      "parentClass": "Warrior",
+      "desc": "Timed guard and Guard Charge tank play; playable first pass.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296018",
+      "name": "Marshal",
+      "class": "Warrior",
+      "parentClass": "Warrior",
+      "desc": "Command-building support with a planted standard; solo effects playable, party support future.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296019",
+      "name": "Spell Tosser",
+      "class": "Magic Man",
+      "parentClass": "Magic Man",
+      "desc": "Fast, low-cooldown physical throws; design only.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296020",
+      "name": "Feelin GoodMan",
+      "class": "Magic Man",
+      "parentClass": "Magic Man",
+      "desc": "Practical healing and support; design only.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296021",
+      "name": "Molecule Bender",
+      "class": "Magic Man",
+      "parentClass": "Magic Man",
+      "desc": "Long channels, area damage and real magic; design only.",
+      "status": "Design only",
+      "isNew": true
+    }
+  ],
+  "skills": [
+    {
+      "id": "1790807296022",
+      "name": "Driving Cut",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296023",
+      "name": "Shield Bash",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296024",
+      "name": "Second Wind",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296025",
+      "name": "Rally",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296026",
+      "name": "Sweeping Cut",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296027",
+      "name": "Grounding Stomp",
+      "class": "Warrior",
+      "subclass": "Core",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296028",
+      "name": "Sundering Finish",
+      "class": "Warrior",
+      "subclass": "Slayer",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296029",
+      "name": "Pursuing Cleave",
+      "class": "Warrior",
+      "subclass": "Slayer",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296030",
+      "name": "Redline",
+      "class": "Warrior",
+      "subclass": "Slayer",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296031",
+      "name": "Bulwark Counter",
+      "class": "Warrior",
+      "subclass": "Bastion",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296032",
+      "name": "Challenge",
+      "class": "Warrior",
+      "subclass": "Bastion",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296033",
+      "name": "Interpose",
+      "class": "Warrior",
+      "subclass": "Bastion",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296034",
+      "name": "Rallying Standard",
+      "class": "Warrior",
+      "subclass": "Marshal",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296035",
+      "name": "Opening Call",
+      "class": "Warrior",
+      "subclass": "Marshal",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296036",
+      "name": "Stand Together",
+      "class": "Warrior",
+      "subclass": "Marshal",
+      "desc": "Use the in-game Warrior book for live balance.",
+      "status": "Playable first pass",
+      "isNew": true
+    },
+    {
+      "id": "1790807296037",
+      "name": "Charcoal, Still Lit",
+      "class": "Magic Man",
+      "subclass": "Core",
+      "desc": "Designed pocket trick; not playable yet.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296038",
+      "name": "Piece of Ice",
+      "class": "Magic Man",
+      "subclass": "Core",
+      "desc": "Designed pocket trick; not playable yet.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296039",
+      "name": "Dirt From The Ground",
+      "class": "Magic Man",
+      "subclass": "Core",
+      "desc": "Designed pocket trick; not playable yet.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296040",
+      "name": "Definitely Not Vodka",
+      "class": "Magic Man",
+      "subclass": "Core",
+      "desc": "Designed pocket trick; not playable yet.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296041",
+      "name": "Vial of Strange Powder",
+      "class": "Magic Man",
+      "subclass": "Core",
+      "desc": "Designed pocket trick; not playable yet.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296063",
+      "name": "And Another One!",
+      "class": "Magic Man",
+      "subclass": "Spell Tosser",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296064",
+      "name": "Hat Trick",
+      "class": "Magic Man",
+      "subclass": "Spell Tosser",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296065",
+      "name": "Wrong Pocket, Right Target",
+      "class": "Magic Man",
+      "subclass": "Spell Tosser",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296066",
+      "name": "You Look Better Already!",
+      "class": "Magic Man",
+      "subclass": "Feelin GoodMan",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296067",
+      "name": "Group Therapy",
+      "class": "Magic Man",
+      "subclass": "Feelin GoodMan",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296068",
+      "name": "Walk It Off",
+      "class": "Magic Man",
+      "subclass": "Feelin GoodMan",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296069",
+      "name": "Holy Smokes, Real Fire!",
+      "class": "Magic Man",
+      "subclass": "Molecule Bender",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296070",
+      "name": "Matter of Impact",
+      "class": "Magic Man",
+      "subclass": "Molecule Bender",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    },
+    {
+      "id": "1790807296071",
+      "name": "Personal Space, Rewritten",
+      "class": "Magic Man",
+      "subclass": "Molecule Bender",
+      "desc": "Designed ability; not playable yet. See the Magic Man planner for rank and balance details.",
+      "status": "Design only",
+      "isNew": true
+    }
+  ],
+  "lifeskills": [
+    {
+      "id": "1790807296042",
+      "name": "Woodcutting",
+      "desc": "Playable station action; yields Timber.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296043",
+      "name": "Mining",
+      "desc": "Playable station action; yields Ore with the revised forged pick.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296044",
+      "name": "Herbalism",
+      "desc": "Playable station action; yields Herbs.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296045",
+      "name": "Cooking",
+      "desc": "Playable station action; consumes two Herbs and awards gold; final hand-contact review pending.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296046",
+      "name": "Alchemy",
+      "desc": "Playable station action; consumes two Herbs and one Ore to make a potion; mortar placement needs correction.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296047",
+      "name": "Smithing",
+      "desc": "Playable station action; consumes one Timber and two Ore and awards gold.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296048",
+      "name": "Combat footwork",
+      "desc": "Playable practice-dummy activity; awards combat profession XP.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296049",
+      "name": "Fishing",
+      "desc": "Playable timing activity at the lake pier; no separate profession rank is currently displayed.",
+      "status": "Playable",
+      "isNew": true
+    }
+  ],
+  "lifeskill_ranks": [
+    {
+      "id": "1790807296050",
+      "name": "Station profession rank rule",
+      "desc": "Woodcutting, Mining, Herbalism, Cooking, Alchemy, Smithing and Combat practice each save profession XP; station prompts show rank 1 + floor(XP / 40). Fishing is a separate timing activity.",
+      "status": "Playable rule",
+      "isNew": true
+    }
+  ],
+  "items": [
+    {
+      "id": "1790807296051",
+      "name": "Gold",
+      "desc": "Saved currency earned from quests, enemies, fishing and work; spent on sword upgrades.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296052",
+      "name": "Health potion",
+      "desc": "Consumable heal; crafted through Alchemy or awarded by progression. Belt flask follows the avatar.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296053",
+      "name": "Timber",
+      "desc": "Woodcutting resource; Smithing consumes one.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296054",
+      "name": "Ore",
+      "desc": "Mining resource; Smithing consumes two and Alchemy consumes one.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296055",
+      "name": "Herbs",
+      "desc": "Herbalism resource; Cooking and Alchemy each consume two.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296056",
+      "name": "Traveller's iron",
+      "desc": "Starter sword, weapon rank 0.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296057",
+      "name": "Warrior shield",
+      "desc": "Playable Warrior equipment; supports directional guard and shield techniques.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296072",
+      "name": "Torven's steel",
+      "desc": "Sword rank 1; Torven upgrades the prior blade for 50 gold after the ward hammer is returned.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296073",
+      "name": "Sweetbriar longsword",
+      "desc": "Sword rank 2; Torven upgrades the prior blade for 85 gold after the ward hammer is returned.",
+      "status": "Playable",
+      "isNew": true
+    },
+    {
+      "id": "1790807296074",
+      "name": "Masterwork runeblade",
+      "desc": "Sword rank 3; Torven upgrades the prior blade for 120 gold after the ward hammer is returned.",
+      "status": "Playable",
+      "isNew": true
+    }
+  ],
+  "regions": [
+    {
+      "id": "1790141970894",
+      "name": "Sweetbriar",
+      "desc": "Starting village and surrounding prologue region in Verdantia; playable.",
+      "isNew": true
+    },
+    {
+      "id": "1790807296058",
+      "name": "Sweetbriar Forest",
+      "desc": "Playable northern forest loop with respawning scavenger camps.",
+      "isNew": true
+    },
+    {
+      "id": "1790807296059",
+      "name": "Craft Yards",
+      "desc": "Playable workstations for gathering, processing and combat practice.",
+      "isNew": true
+    },
+    {
+      "id": "1790807296060",
+      "name": "Sweetbriar Lake",
+      "desc": "Playable shore, pier, swimming and fishing.",
+      "isNew": true
+    },
+    {
+      "id": "1790807296061",
+      "name": "Forgotten Arch",
+      "desc": "Playable ruined court of the Thorn Warden.",
+      "isNew": true
+    },
+    {
+      "id": "1790807296062",
+      "name": "Hollowstone Rehearsal",
+      "desc": "Playable solo cave-raid tutorial with two rooms, seals and Sentinel boss.",
+      "isNew": true
+    }
+  ],
+  "guilds": [
+    {
+      "id": "1790441368608",
+      "name": "Sweetbriar residents",
+      "desc": "Dashboard grouping for named village NPCs and ambient working residents; there is no player-guild system.",
+      "isNew": true
+    },
+    {
+      "id": "1790441622281",
+      "name": "Road and woodland enemies",
+      "desc": "Dashboard grouping for quest raiders and repeatable forest scavengers.",
+      "isNew": true
+    },
+    {
+      "id": "1790441755257",
+      "name": "Hollowstone rehearsal",
+      "desc": "Dashboard grouping for the rehearsal marshal, cave scavengers and Sentinel.",
+      "isNew": true
+    },
+    {
+      "id": "1790441875409",
+      "name": "Bosses",
+      "desc": "Dashboard grouping for the Thorn Warden and Hollowstone Sentinel; not an in-game faction.",
+      "isNew": true
+    }
+  ],
+  "npcs": [
+    {
+      "id": "1790440484258",
+      "name": "Alder - market gardener",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Primary quest giver; the missing sheep start the boundary-bell prologue and Alder receives the final report."
+    },
+    {
+      "id": "1790440501125",
+      "name": "Torven - ward smith",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ward-hammer quest giver and sword-upgrade smith."
+    },
+    {
+      "id": "1790440513109",
+      "name": "Noll - lake fisher",
+      "region": "Sweetbriar Lake",
+      "guild": "Sweetbriar residents",
+      "role": "Explains fishing at the wooden pier."
+    },
+    {
+      "id": "1790440530989",
+      "name": "Pell - village watch",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Explains the healing and save waystone."
+    },
+    {
+      "id": "1790440563888",
+      "name": "Istren - ward keeper",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Directs the player to the Thorn Warden after the road-ward raiders are cleared."
+    },
+    {
+      "id": "1790440618667",
+      "name": "Rehearsal marshal",
+      "region": "Hollowstone Rehearsal",
+      "guild": "Hollowstone rehearsal",
+      "role": "Ambient guide near the solo cave rehearsal entrance."
+    },
+    {
+      "id": "1790440777885",
+      "name": "Ada the shopkeeper",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient resident with greeting and walking route; no shop transaction yet."
+    },
+    {
+      "id": "1790440803653",
+      "name": "Owen the carter",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient logistics resident with greeting and walking route."
+    },
+    {
+      "id": "1790440837352",
+      "name": "Mara the cooper",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient cooper with greeting and walking route."
+    },
+    {
+      "id": "1790440867952",
+      "name": "Tess the laundress",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient laundress with greeting and walking route."
+    },
+    {
+      "id": "1790440895532",
+      "name": "Fin the apprentice",
+      "region": "Craft Yards",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient forge apprentice; points to practice anvil while Torven handles upgrades."
+    },
+    {
+      "id": "1790440916619",
+      "name": "Nell the cook",
+      "region": "Craft Yards",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient cook with greeting and walking route."
+    },
+    {
+      "id": "1790440941436",
+      "name": "Iris the herbalist",
+      "region": "Craft Yards",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient herbalist with greeting and walking route."
+    },
+    {
+      "id": "1790440977292",
+      "name": "Hugh the neighbour",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient west-quarter resident with greeting and walking route."
+    },
+    {
+      "id": "1790441017852",
+      "name": "Perrin the grower",
+      "region": "Sweetbriar",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient allotment grower with greeting and walking route."
+    },
+    {
+      "id": "1790441052052",
+      "name": "Ruth the forester",
+      "region": "Sweetbriar Forest",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient forester with greeting and walking route."
+    },
+    {
+      "id": "1790441087740",
+      "name": "Cal the quarry hand",
+      "region": "Craft Yards",
+      "guild": "Sweetbriar residents",
+      "role": "Ambient quarry worker with greeting and walking route."
+    },
+    {
+      "id": "1790441670649",
+      "name": "Woodland scavenger",
+      "region": "Sweetbriar Forest",
+      "guild": "Road and woodland enemies",
+      "role": "Repeatable forest enemy; six placed across three camps, with 45-65 second respawns away from the player."
+    },
+    {
+      "id": "1790441789457",
+      "name": "Cave scavenger",
+      "region": "Hollowstone Rehearsal",
+      "guild": "Hollowstone rehearsal",
+      "role": "Enemy spawned during the solo cave-raid tutorial."
+    },
+    {
+      "id": "1790441828881",
+      "name": "Hollowstone Sentinel",
+      "region": "Hollowstone Rehearsal",
+      "guild": "Bosses",
+      "role": "Final boss of the repeatable solo cave rehearsal; separate from the Thorn Warden."
+    },
+    {
+      "id": "1790441903873",
+      "name": "Thorn Warden",
+      "region": "Forgotten Arch",
+      "guild": "Bosses",
+      "role": "Original prologue boss at the ruined court with authored animation, marked attacks and a phase change."
+    },
+    {
+      "id": "1790441972880",
+      "name": "Roadside bandit",
+      "region": "Sweetbriar",
+      "guild": "Road and woodland enemies",
+      "role": "One of three permanent prologue road-ward raiders."
+    }
+  ]
+}

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oakenheart MMO Design Hub</title>
+    <title>Oakheart Online Design Hub</title>
+    <link rel="icon" type="image/png" href="./assets/oakheart-icon.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -15,7 +16,7 @@
                 extend: {
                     colors: {
                         slate: { 850: '#151f32', 900: '#0f172a', 950: '#080d1a' },
-                        oakenheart: { gold: '#d4af37', sky: '#38bdf8', dark: '#0b1120' }
+                        oakheart: { gold: '#d4af37', sky: '#38bdf8', dark: '#0b1120' }
                     }
                 }
             }
@@ -38,12 +39,12 @@
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <i data-lucide="compass" class="w-8 h-8 text-sky-400"></i>
+                <img src="./assets/oakheart-icon.png" alt="Oakheart Online crest" class="w-9 h-9 object-contain">
                 <div>
                     <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-amber-300">
-                        Oakenheart MMO Hub
+                        Oakheart Online Design Hub
                     </h1>
-                    <p class="text-[10px] text-slate-400">Merge-On-Import & Questline Engine Active</p>
+                    <p class="text-[10px] text-slate-400">Current game prototype and future MMO design</p>
                 </div>
             </div>
             
@@ -56,6 +57,11 @@
                     <i data-lucide="git-merge" class="w-4 h-4"></i>
                     <span>Merge JSON Import</span>
                     <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
+                </label>
+                <label class="flex items-center space-x-1 text-xs bg-amber-700 hover:bg-amber-600 text-white border border-amber-600 px-3 py-1.5 rounded cursor-pointer transition" title="Replace this browser's dashboard with a full export">
+                    <i data-lucide="file-input" class="w-4 h-4"></i>
+                    <span>Replace JSON</span>
+                    <input type="file" onchange="importData(event, true)" class="hidden" accept=".json">
                 </label>
             </div>
         </div>
@@ -91,12 +97,16 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <div class="mb-5 flex flex-wrap items-center gap-3 rounded-lg border border-amber-800/50 bg-amber-950/20 px-4 py-3 text-xs text-amber-100">
+            <span id="data-status">Loading project snapshot…</span>
+            <button onclick="loadProjectSnapshot(true)" class="rounded border border-amber-700 px-2 py-1 font-semibold hover:bg-amber-900/40">Load latest project snapshot</button>
+        </div>
 
         <!-- ==================== TAB 1: NOTES & CODEX ==================== -->
         <section id="tab-notes" class="tab-content">
             <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-100">Oakenheart Codex</h2>
+                    <h2 class="text-2xl font-bold text-slate-100">Oakheart Online Codex</h2>
                     <p class="text-xs text-slate-400">Documentation & Worldbuilding Notes</p>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -126,7 +136,7 @@
             <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-100">Quests & Questlines</h2>
-                    <p class="text-xs text-slate-400">Map out quest givers, objectives, and progression chains</p>
+                    <p class="text-xs text-slate-400">Editorial chapter labels for the playable stage-based prologue</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <div class="relative">
@@ -313,7 +323,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
-                        <input type="text" id="search-npcs" onkeyup="renderNpcs()" placeholder="Filter NPCs (e.g. Honeywood)..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-56 md:w-64">
+                        <input type="text" id="search-npcs" onkeyup="renderNpcs()" placeholder="Filter NPCs (e.g. Sweetbriar)..." class="bg-slate-900 border border-slate-800 text-xs text-slate-200 pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-sky-500 w-56 md:w-64">
                     </div>
                     <button onclick="openNpcModal()" class="bg-sky-600 hover:bg-sky-500 text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1 shadow transition">
                         <i data-lucide="user-plus" class="w-4 h-4"></i><span>New NPC</span>
@@ -624,7 +634,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Item Name</label>
-                    <input type="text" id="item-name" placeholder="e.g. Skyweaver's Staff" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                    <input type="text" id="item-name" placeholder="e.g. Traveller's iron" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -636,11 +646,13 @@
                             <option value="Quest / Relic">Quest / Relic</option>
                             <option value="Material">Crafting Material</option>
                             <option value="LifeSkill">LifeSkill</option>
+                            <option value="Currency">Currency</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Rarity</label>
                         <select id="item-rarity" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                            <option value="Unrated">Unrated / not defined</option>
                             <option value="Common">Common</option>
                             <option value="Uncommon">Uncommon</option>
                             <option value="Rare">Rare</option>
@@ -669,7 +681,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Region Name</label>
-                    <input type="text" id="region-name" placeholder="e.g. Aetheria Isles, Honeywood" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+                        <input type="text" id="region-name" placeholder="e.g. Sweetbriar Forest" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500">
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Description / Biome</label>
@@ -739,27 +751,84 @@
 
     <!-- JavaScript App Logic -->
     <script>
-        let state = {
-            notes: JSON.parse(localStorage.getItem('oakenheart_notes') || '[]'),
-            quests: JSON.parse(localStorage.getItem('oakenheart_quests') || '[]'),
-            tasks: JSON.parse(localStorage.getItem('oakenheart_tasks') || '[]'),
-            classes: JSON.parse(localStorage.getItem('oakenheart_classes') || '[]'),
-            subclasses: JSON.parse(localStorage.getItem('oakenheart_subclasses') || '[]'),
-            skills: JSON.parse(localStorage.getItem('oakenheart_skills') || '[]'),
-            lifeskills: JSON.parse(localStorage.getItem('oakenheart_lifeskills') || '[]'),
-            lifeskill_ranks: JSON.parse(localStorage.getItem('oakenheart_lifeskill_ranks') || '[]'),
-            items: JSON.parse(localStorage.getItem('oakenheart_items') || '[]'),
-            regions: JSON.parse(localStorage.getItem('oakenheart_regions') || '[]'),
-            guilds: JSON.parse(localStorage.getItem('oakenheart_guilds') || '[]'),
-            npcs: JSON.parse(localStorage.getItem('oakenheart_npcs') || '[]')
-        };
+        const DATA_KEYS = ['notes', 'quests', 'tasks', 'classes', 'subclasses', 'skills',
+            'lifeskills', 'lifeskill_ranks', 'items', 'regions', 'guilds', 'npcs'];
+
+        function normalizeState(input) {
+            const result = Object.fromEntries(DATA_KEYS.map(key => [key,
+                Array.isArray(input?.[key]) ? input[key].filter(item => item && typeof item === 'object').map(item => ({ ...item, id: String(item.id ?? '') })) : []]));
+            const classIds = Object.fromEntries(result.classes.map(item => [item.name, item.id]));
+            result.skills = result.skills.map(item => ({ ...item, className: item.className || item.class || '' }));
+            const playstyles = { Slayer: 'DPS', Bastion: 'Tank', Marshal: 'Support',
+                'Spell Tosser': 'DPS', 'Feelin GoodMan': 'Support', 'Molecule Bender': 'DPS' };
+            result.subclasses = result.subclasses.map(item => ({ ...item,
+                baseClassId: item.baseClassId || classIds[item.parentClass || item.class] || '',
+                playstyle: item.playstyle || playstyles[item.name] || 'Unspecified',
+                skills: Array.isArray(item.skills) ? item.skills : result.skills.filter(skill => skill.subclass === item.name).map(skill => skill.name)
+            }));
+            result.lifeskills = result.lifeskills.map(item => ({ ...item,
+                brainstorm: item.brainstorm || item.desc || '',
+                effects: item.effects || (item.name === 'Fishing' ? 'Timing activity; no separate profession rank is displayed.' : 'Current station rank: 1 + floor(profession XP / 40).')
+            }));
+            // Older exports contain one global rank rule; the UI needs a rank linked to each station.
+            if (result.lifeskill_ranks.length === 1 && !result.lifeskill_ranks[0].lifeSkillId) {
+                const rule = result.lifeskill_ranks[0];
+                result.lifeskill_ranks = result.lifeskills.filter(item => item.name !== 'Fishing').map(item => ({
+                    id: `${rule.id}-${item.id}`, lifeSkillId: item.id, name: 'Station rank',
+                    levels: '1 + floor(XP / 40)', bonus: '', tool: 'None / Unassigned',
+                    desc: rule.desc, status: rule.status
+                }));
+            }
+            result.items = result.items.map(item => ({ ...item,
+                type: item.type || (item.name === 'Gold' ? 'Currency' : item.name === 'Health potion' ? 'Consumable' :
+                    ['Timber', 'Ore', 'Herbs'].includes(item.name) ? 'Material' : item.name === 'Warrior shield' ? 'Armor' : 'Weapon'),
+                rarity: item.rarity || 'Unrated', stats: item.stats || item.desc || ''
+            }));
+            result.tasks = result.tasks.map(item => ({ ...item, status: ['To Do', 'In Progress', 'Completed'].includes(item.status) ? item.status : 'To Do' }));
+            return result;
+        }
+
+        function readBrowserState() {
+            const raw = {};
+            DATA_KEYS.forEach(key => {
+                try { raw[key] = JSON.parse(localStorage.getItem(`oakenheart_${key}`) || '[]'); }
+                catch { raw[key] = []; }
+            });
+            return normalizeState(raw);
+        }
+
+        const hasBrowserData = DATA_KEYS.some(key => localStorage.getItem(`oakenheart_${key}`) !== null);
+        let state = readBrowserState();
 
         let currentNoteFilter = 'All';
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
+            if (!hasBrowserData) await loadProjectSnapshot(false);
+            else setDataStatus('Your browser workspace is loaded. Edits stay on this browser; Export JSON to back them up.');
             renderAll();
         });
+
+        function setDataStatus(message) {
+            document.getElementById('data-status').textContent = message;
+        }
+
+        async function loadProjectSnapshot(replace) {
+            if (replace && !confirm('Replace this browser’s dashboard with the latest published project snapshot? Export JSON first if you want to keep local edits.')) return;
+            try {
+                const response = await fetch('./project-snapshot.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!DATA_KEYS.every(key => Array.isArray(data[key]))) throw new Error('Incomplete project snapshot');
+                state = normalizeState(data);
+                DATA_KEYS.forEach(key => state[key].forEach(item => delete item.isNew));
+                saveToLocalStorage();
+                renderAll();
+                setDataStatus('Current project snapshot loaded. Edits stay on this browser; Export JSON to back them up.');
+            } catch (error) {
+                setDataStatus(`Could not load the project snapshot (${error.message}). Your browser data was kept.`);
+            }
+        }
 
         function saveToLocalStorage() {
             localStorage.setItem('oakenheart_notes', JSON.stringify(state.notes));
@@ -820,23 +889,35 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `oakenheart_mmo_data_${Date.now()}.json`);
+            downloadAnchor.setAttribute("download", `oakheart_online_data_${Date.now()}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
         }
 
-        function importData(event) {
+        function importData(event, replace = false) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedState = JSON.parse(e.target.result);
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || typeof parsed !== 'object') throw new Error('Invalid dashboard data');
+                    if (replace && !DATA_KEYS.every(key => Array.isArray(parsed[key]))) throw new Error('A full export is required for replacement');
+                    if (replace && !confirm('Replace all dashboard data in this browser with this JSON file? Export JSON first if you want a backup.')) return;
+                    const importedState = normalizeState(parsed);
+                    if (replace) {
+                        state = importedState;
+                        saveToLocalStorage();
+                        renderAll();
+                        setDataStatus('JSON replacement loaded. Edits stay on this browser; Export JSON to back them up.');
+                        alert('Dashboard replaced with the selected JSON export.');
+                        return;
+                    }
                     let mergedCount = 0;
 
-                    Object.keys(importedState).forEach(key => {
+                    DATA_KEYS.forEach(key => {
                         if (Array.isArray(importedState[key]) && Array.isArray(state[key])) {
                             importedState[key].forEach(newItem => {
                                 const exists = state[key].some(existing => existing.id === newItem.id);
@@ -851,11 +932,12 @@
 
                     saveToLocalStorage();
                     renderAll();
-                    alert(`Successfully imported and merged ${mergedCount} new items!`);
+                    alert(`Merged ${mergedCount} new items. Existing IDs were kept; use Replace JSON to update or remove existing entries.`);
                 } catch (err) {
-                    alert('Failed to parse JSON file. Please make sure it is a valid Oakenheart export.');
+                    alert(`Could not import dashboard JSON: ${err.message}`);
                 }
             };
+            reader.onloadend = () => { event.target.value = ''; };
             reader.readAsText(file);
         }
 
@@ -1667,6 +1749,7 @@
                                     <h3 class="text-lg font-bold text-sky-400 flex items-center space-x-2">
                                         <i data-lucide="sword" class="w-5 h-5 text-sky-400"></i><span>${c.name}</span>
                                     </h3>
+                                    ${c.status ? `<span class="text-[10px] text-amber-300">${c.status}</span>` : ''}
                                     ${c.desc ? `<p class="text-xs text-slate-300 mt-1">${c.desc}</p>` : ''}
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -1717,6 +1800,7 @@
                                                         ${sk.ranks ? `<span class="text-[10px] bg-sky-950 text-sky-400 px-1.5 py-0.5 rounded border border-sky-800/50">${sk.ranks} Ranks</span>` : ''}
                                                     </div>
                                                     <p class="text-[11px] text-slate-400 mb-1">${sk.desc || 'No description.'}</p>
+                                                    ${sk.status ? `<p class="text-[10px] text-amber-300 mb-1">${sk.status}</p>` : ''}
                                                     <div class="flex items-center space-x-3 text-[10px] text-slate-500">
                                                         ${sk.cost ? `<span>Cost: ${sk.cost}</span>` : ''}
                                                         ${sk.cooldown ? `<span>CD: ${sk.cooldown}</span>` : ''}
@@ -1754,7 +1838,7 @@
                 document.getElementById('item-id').value = '';
                 document.getElementById('item-name').value = '';
                 document.getElementById('item-type').value = 'Weapon';
-                document.getElementById('item-rarity').value = 'Common';
+                document.getElementById('item-rarity').value = 'Unrated';
                 document.getElementById('item-stats').value = '';
             }
             modal.classList.remove('hidden');
@@ -1827,7 +1911,7 @@
                     <div onclick="openItemModal('${item.id}')" class="${unreviewedClass} border border-slate-800 rounded-lg p-4 flex flex-col justify-between cursor-pointer hover:border-sky-500/50 transition">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded border ${rarityStyle}">${item.rarity} ${item.type}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded border ${rarityStyle}">${item.rarity === 'Unrated' ? '' : item.rarity + ' '}${item.type}</span>
                                 ${badge}
                             </div>
                             <h3 class="font-bold text-slate-100 text-base mb-2">${item.name}</h3>
